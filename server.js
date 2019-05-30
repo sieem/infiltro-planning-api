@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const User = require('./models/user')
+const jwt = require('jsonwebtoken')
 
 const port = process.env.PORT || 3000
 const app = express()
@@ -27,6 +28,24 @@ app.post('/register', (req, res) => {
         if (err) console.log(err)
         else {
             res.status(200).send(registeredUser)
+        }
+    })
+})
+
+app.post('/login', (req, res) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if (err) console.log(err)
+        else {
+            if (!user) 
+                res.status(401).send('Invalid Email')
+            else
+                if (user.password !== req.body.password) 
+                    res.status(401).send('Invalid Password')
+                else {
+                    let payload = { subject: user._id }
+                    let token = jwt.sign(payload, 'secretKey')
+                    res.status(200).send({ token })
+                }
         }
     })
 })
