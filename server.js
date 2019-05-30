@@ -9,9 +9,8 @@ const port = process.env.PORT || 3000
 const app = express()
 const db = "mongodb://infiltro:infiltrologin@localhost:27017/infiltro-planning"
 
-app.use(cors())
 app.use(express.json())
-
+app.use(cors())
 
 mongoose.connect(db, { useNewUrlParser: true }, err => {
     if (err) console.log(err)
@@ -40,8 +39,18 @@ app.get('/', (req,res) => {
     res.send('Hello from server')
 })
 
-app.get('/special', verifyToken, (req, res) => {
-    res.send('Hello from special server')
+app.get('/planning-data', verifyToken, (req, res) => {
+    let planningData = [
+        {
+            "title": "test",
+            "date": "tomorrow"
+        },
+        {
+            "title": "test it out",
+            "date": "today"
+        }
+    ]
+    res.json(planningData)
 })
 
 app.post('/register', (req, res) => {
@@ -49,7 +58,7 @@ app.post('/register', (req, res) => {
         if (err) console.log(err)
         else {
             if (user)
-                res.status(400).send('Email already excists')
+                res.status(401).send('Email already exists')
             else {
                 let user = new User(req.body)
                 user.save((err, user) => {
