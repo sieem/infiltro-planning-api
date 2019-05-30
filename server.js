@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 const User = require('./models/user')
 const jwt = require('jsonwebtoken')
 const secretKey = 'secretKey'
@@ -8,6 +9,7 @@ const port = process.env.PORT || 3000
 const app = express()
 const db = "mongodb://infiltro:infiltrologin@localhost:27017/infiltro-planning"
 
+app.use(cors())
 app.use(express.json())
 
 
@@ -18,9 +20,28 @@ mongoose.connect(db, { useNewUrlParser: true }, err => {
     }
 })
 
+function verifyToken(req, res, next) {
+    if (!req.headers.authorization) {
+        return res.status(401).send('Unauthorized request')
+    }
+    let token = req.headers.authorization.split(' ')[1]
+    if (token === 'null') {
+        return res.status(401).send('Unauthorized request')
+    }
+    let payload = jwt.verify(token, 'secretKey')
+    if (!payload) {
+        return res.status(401).send('Unauthorized request')
+    }
+    req.userId = payload.subject
+    next()
+}
 
 app.get('/', (req,res) => {
     res.send('Hello from server')
+})
+
+app.get('/special', verifyToken, (req, res) => {
+    res.send('Hello from special server')
 })
 
 app.post('/register', (req, res) => {
