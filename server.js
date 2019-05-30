@@ -1,6 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
-
+const User = require('./models/user')
 
 const port = process.env.PORT || 3000
 const app = express()
@@ -22,9 +22,13 @@ app.get('/', (req,res) => {
 })
 
 app.post('/register', (req, res) => {
-    let userData = req.body
-    console.log(userData)
-
+    let user = new User(req.body)
+    user.save((err, registeredUser) => {
+        if (err) console.log(err)
+        else {
+            res.status(200).send(registeredUser)
+        }
+    })
 })
 
 app.listen(port, () => {
