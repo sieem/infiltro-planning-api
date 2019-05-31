@@ -4,7 +4,7 @@ exports.getCompanies = (req, res) => {
     Company.find({}, (err, companies) => {
         res.json(companies)
     })
-};
+}
 
 exports.saveCompany = (req, res) => {
     let company = new Company(req.body)
@@ -14,4 +14,13 @@ exports.saveCompany = (req, res) => {
             res.json(company)
         }
     })
-};
+}
+
+exports.removeCompany = (req, res) => {
+    Company.deleteOne({ _id: req.body._id }, (err,company) => {
+        if (err) console.log(err)
+        else {
+            res.json(company)
+        }
+    })
+}

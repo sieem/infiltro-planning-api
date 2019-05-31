@@ -17,5 +17,6 @@ router.get('/planning-data', authMiddleware.verifyToken, planningController.getP
 
 router.get('/get-companies', companiesController.getCompanies)
 router.post('/save-company', upload.none(), companiesController.saveCompany)
+router.post('/remove-company', upload.none(), companiesController.removeCompany)
 
 module.exports = router;

@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000
 const app = express()
 const db = "mongodb://infiltro:infiltrologin@localhost:27017/infiltro-planning"
 
-// app.use(express.json())
+app.use(express.json())
 app.use(cors())
 
 mongoose.connect(db, { useNewUrlParser: true }, err => {

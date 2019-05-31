@@ -10,4 +10,4 @@ exports.getPlanningData = (req, res) => {
         }
     ]
     res.json(planningData)
-};
+}
