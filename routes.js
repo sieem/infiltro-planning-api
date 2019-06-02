@@ -12,6 +12,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 
 router.post('/register', upload.none(), authController.registerUser)
 router.post('/login', upload.none(), authController.loginUser)
+router.get('/get-user-details', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.getUserDetails)
 
 router.get('/planning-data', authMiddleware.verifyToken, planningController.getPlanningData)
 

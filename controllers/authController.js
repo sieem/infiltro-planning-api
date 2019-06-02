@@ -51,3 +51,7 @@ exports.registerUser = (req, res) => {
         }
     })
 }
+
+exports.getUserDetails = (req, res) => {
+    res.status(200).json(req.user)
+}
