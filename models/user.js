@@ -4,6 +4,7 @@ const schema = {
     email: String,
     password: String,
     company: String,
+    role: String,
 }
 
 module.exports = mongoose.model('user', schema, 'users')
