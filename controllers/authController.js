@@ -18,6 +18,7 @@ exports.loginUser = (req, res) => {
                     } else {
                         let payload = { subject: user._id }
                         let token = jwt.sign(payload, secretKey)
+                        res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                         res.status(200).send({ token })
                     }
                 });
@@ -43,6 +44,7 @@ exports.registerUser = (req, res) => {
                         else {
                             let payload = { subject: user._id }
                             let token = jwt.sign(payload, secretKey)
+                            res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                             res.status(200).send({ token })
                         }
                     })

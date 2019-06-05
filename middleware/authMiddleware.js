@@ -4,10 +4,10 @@ const User = require('../models/user')
 const secretKey = 'secretKey'
 
 exports.verifyToken = (req, res, next) => {
-    if (!req.headers.authorization) {
+    if (!req.cookies.token) {
         return res.status(401).send('Unauthorized request')
     }
-    let token = req.headers.authorization.split(' ')[1]
+    let token = req.cookies.token
     if (token === 'null') {
         return res.status(401).send('Unauthorized request')
     }
