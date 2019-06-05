@@ -54,6 +54,11 @@ exports.registerUser = (req, res) => {
     })
 }
 
+exports.logoutUser = (req, res) => {
+    res.clearCookie("token")
+    res.status(200).send({"status": "done"})
+}
+
 exports.getUserDetails = (req, res) => {
     res.status(200).json(req.user)
 }

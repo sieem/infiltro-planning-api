@@ -7,4 +7,4 @@ const schema = {
     role: String,
 }
 
-module.exports = mongoose.model('user', schema, 'users')
+module.exports = mongoose.model('user', schema)
