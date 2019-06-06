@@ -4,7 +4,6 @@ const upload = multer()
 
 const router = express.Router()
 
-const planningController = require('./controllers/planningController')
 const projectController = require('./controllers/projectController')
 const authController = require('./controllers/authController')
 const companiesController = require('./controllers/companiesController')
@@ -16,7 +15,8 @@ router.post('/login', upload.none(), authController.loginUser)
 router.get('/logout', authController.logoutUser)
 router.get('/get-user-details', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.getUserDetails)
 
-router.get('/planning-data', authMiddleware.verifyToken, planningController.getPlanningData)
+router.get('/get-projects', authMiddleware.verifyToken, projectController.getProjects)
+router.get('/get-project/:projectId', authMiddleware.verifyToken, projectController.getProject)
 router.post('/save-project', authMiddleware.verifyToken, upload.none(), projectController.saveProject)
 
 router.get('/get-companies', companiesController.getCompanies)
