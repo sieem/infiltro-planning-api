@@ -16,7 +16,7 @@ exports.loginUser = (req, res) => {
                     else if (!compareValid) {
                         res.status(401).send('Invalid Password')
                     } else {
-                        let payload = { userId: user._id, userRole: user.role, userCompany: user.company }
+                        let payload = { id: user._id, role: user.role, company: user.company }
                         let token = jwt.sign(payload, secretKey)
                         res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                         res.status(200).send({ token })
@@ -42,7 +42,7 @@ exports.registerUser = (req, res) => {
                     user.save((err, user) => {
                         if (err) console.log(err)
                         else {
-                            let payload = { userId: user._id, userRole: user.role, userCompany: user.company }
+                            let payload = { id: user._id, role: user.role, company: user.company }
                             let token = jwt.sign(payload, secretKey)
                             res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                             res.status(200).send({ token })
