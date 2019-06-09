@@ -15,7 +15,9 @@ exports.verifyToken = (req, res, next) => {
     if (!payload) {
         return res.status(401).send('Unauthorized request')
     }
-    req.userId = payload.subject
+    req.userId = payload.userId
+    req.userRole = payload.userRole
+    req.userCompany = payload.userCompany
     next()
 }
 
