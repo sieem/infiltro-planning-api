@@ -1,14 +1,18 @@
 const Project = require('../models/project')
 
 exports.saveProject = (req, res) => {
-    let project = new Project(req.body)
+    if ((project.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
+        let project = new Project(req.body)
 
-    Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
-        if (err) console.log(err)
-        else {
-            res.status(200).json(savedProject)
-        }
-    });
+        Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+            if (err) console.log(err)
+            else {
+                res.status(200).json(savedProject)
+            }
+        });
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
 }
 
 exports.getProjects = (req, res) => {

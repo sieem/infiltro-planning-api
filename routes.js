@@ -17,7 +17,7 @@ router.post('/login', upload.none(), authController.loginUser)
 
 router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProjects)
 router.get('/get-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProject)
-router.post('/save-project', authMiddleware.verifyToken, upload.none(), projectController.saveProject)
+router.post('/save-project', authMiddleware.verifyToken, authMiddleware.getUserDetails, upload.none(), projectController.saveProject)
 
 router.get('/get-companies', companiesController.getCompanies)
 router.post('/save-company', upload.none(), companiesController.saveCompany)
