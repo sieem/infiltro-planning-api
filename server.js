@@ -21,6 +21,8 @@ mongoose.connect(db, { useNewUrlParser: true }, err => {
 
 app.use('/api', routes);
 
+app.use(express.static('../infiltro-planning/dist'))
+
 app.listen(port, () => {
     console.log(`Server running on localhost:${port}`)
 })
