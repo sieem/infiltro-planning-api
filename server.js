@@ -1,12 +1,15 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const path = require('path')
+const fs = require('fs')
 const cookieParser = require('cookie-parser')
 const routes = require('./routes')
 
 const port = process.env.PORT || 3000
 const app = express()
 const db = "mongodb://infiltro:infiltrologin@localhost:27017/infiltro-planning"
+const staticRoot = '../infiltro-planning/dist/'
 
 app.use(express.json())
 app.use(cors())
@@ -21,7 +24,24 @@ mongoose.connect(db, { useNewUrlParser: true }, err => {
 
 app.use('/api', routes);
 
-app.use(express.static('../infiltro-planning/dist'))
+app.use(function (req, res, next) {
+    //if the request is not html then move along
+    var accept = req.accepts('html', 'json', 'xml');
+    if (accept !== 'html') {
+        return next();
+    }
+
+    // if the request has a '.' assume that it's for a file, move along
+    var ext = path.extname(req.path);
+    if (ext !== '') {
+        return next();
+    }
+
+    fs.createReadStream(staticRoot + 'index.html').pipe(res);
+
+});
+
+app.use(express.static(staticRoot));
 
 app.listen(port, () => {
     console.log(`Server running on localhost:${port}`)
