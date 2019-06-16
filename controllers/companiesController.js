@@ -17,7 +17,7 @@ exports.saveCompany = (req, res) => {
 }
 
 exports.removeCompany = (req, res) => {
-    Company.deleteOne({ _id: req.body._id }, (err,company) => {
+    Company.deleteOne({ _id: req.params.companyId }, (err,company) => {
         if (err) console.log(err)
         else {
             res.json(company)
