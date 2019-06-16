@@ -1,13 +1,13 @@
 const Project = require('../models/project')
 
 exports.saveProject = (req, res) => {
-    if ((project.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
+    if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
         let project = new Project(req.body)
 
         Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
             if (err) console.log(err)
             else {
-                res.status(200).json(savedProject)
+                res.status(200).json({ projectId: project._id})
             }
         });
     } else {
