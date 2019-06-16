@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const mailService = require('../services/mailService')
 const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
@@ -39,7 +40,7 @@ exports.loginUser = (req, res) => {
     })
 }
 
-exports.addUser = (req, res) => {
+exports.addUser = async (req, res) => {
     if (req.user.role === 'admin') {
         User.findOne({ email: req.body.email }, (err, user) => {
             if (err) console.log(err)
@@ -51,8 +52,15 @@ exports.addUser = (req, res) => {
                     user.save((err, user) => {
                         if (err) console.log(err)
                         else {
-                            // TODO: send email
-                            res.status(200).send({ userId: user._id })
+                            let mail = new mailService({
+                                from: '"Infiltro" <noreply@infiltro.be>',
+                                to: user.email,
+                                subject: "Je bent toegevoegd op planning.infiltro.be",
+                                text: `Gelieve je registratie af te ronden op ${process.env.BASE_URL}/register/${user._id}`,
+                                html: `Gelieve je registratie af te ronden op <a href="${process.env.BASE_URL}/register/${user._id}">${process.env.BASE_URL}/register/${user._id}</a>`
+                            })
+                            let emailUrl = mail.send()
+                            res.status(200).send({ userId: user._id, email_url: emailUrl })
                         }
                     })
                 }
