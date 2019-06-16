@@ -31,7 +31,6 @@ exports.loginUser = (req, res) => {
                     } else {
                         let payload = { id: user._id, role: user.role, company: user.company }
                         let token = jwt.sign(payload, secretKey)
-                        // res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                         res.status(200).send({ token })
                     }
                 });
@@ -80,7 +79,6 @@ exports.registerUser = (req, res) => {
                     else {
                         let payload = { id: user._id, role: user.role, company: user.company }
                         let token = jwt.sign(payload, secretKey)
-                        // res.cookie('token', token, { maxAge: 900000, httpOnly: true })
                         res.status(200).send({ token })
                     }
                 })
@@ -89,12 +87,3 @@ exports.registerUser = (req, res) => {
     })
     
 }
-
-// exports.logoutUser = (req, res) => {
-//     res.clearCookie("token")
-//     res.status(200).send({"status": "done"})
-// }
-
-// exports.getUserDetails = (req, res) => {
-//     res.status(200).json(req.user)
-// }
