@@ -5,6 +5,13 @@ const mailService = require('../services/mailService')
 const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
+exports.getUsers = (req, res) => {
+    User.find({}, (err, users) => {
+        if (err) console.log(err)
+        else res.status(200).json(users)
+    })
+}
+
 exports.getUser = (req, res) => {
     User.findById(req.params.userId, (err, user) => {
         if (err) console.log(err)
@@ -59,8 +66,9 @@ exports.addUser = async (req, res) => {
                                 text: `Gelieve je registratie af te ronden op ${process.env.BASE_URL}/register/${user._id}`,
                                 html: `Gelieve je registratie af te ronden op <a href="${process.env.BASE_URL}/register/${user._id}">${process.env.BASE_URL}/register/${user._id}</a>`
                             })
-                            let emailUrl = mail.send()
-                            res.status(200).send({ userId: user._id, email_url: emailUrl })
+                            mail.send()
+                            
+                            res.status(200).send(user)
                         }
                     })
                 }

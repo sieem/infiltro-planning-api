@@ -13,6 +13,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 router.post('/add-user', authMiddleware.verifyToken, authMiddleware.getUserDetails, upload.none(), authController.addUser)
 router.post('/register', upload.none(), authController.registerUser)
 router.post('/login', upload.none(), authController.loginUser)
+router.get('/get-users', authController.getUsers)
 router.get('/get-user/:userId', authController.getUser)
 
 router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProjects)
