@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
-const secretKey = 'secretKey'
+const secretKey = process.env.SECRET_KEY
 
 exports.verifyToken = (req, res, next) => {
     if (!req.headers.authorization) {

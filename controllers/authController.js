@@ -1,7 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const secretKey = 'secretKey'
+const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 exports.getUser = (req, res) => {
