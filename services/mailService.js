@@ -6,17 +6,37 @@ module.exports = class Mail {
     }
 
     async init() {
-        let testAccount = await nodemailer.createTestAccount()
 
-        this.transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
-            auth: {
-                user: testAccount.user,
-                pass: testAccount.pass
+        let mailConfig;
+        if (process.env.NODE_ENV === 'production') {
+            // all emails are delivered to destination
+            mailConfig = {
+                host: 'mail.infiltro.be',
+                port: 465,
+                auth: {
+                    user: process.env.MAILSERVER_USER,
+                    pass: process.env.MAILSERVER_PASS
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
             }
-        })
+        } else {
+            // all emails are catched by ethereal.email
+
+            let testAccount = await nodemailer.createTestAccount()
+
+            mailConfig = {
+                host: 'smtp.ethereal.email',
+                port: 587,
+                auth: {
+                    user: testAccount.user,
+                    pass: testAccount.pass
+                }
+            }
+        }
+
+        this.transporter = await nodemailer.createTransport(mailConfig)
     }
 
     async send() {
