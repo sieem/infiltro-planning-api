@@ -6,36 +6,34 @@ exports.saveProject = async (req, res) => {
         let project = new Project(req.body)
 
         // check if address changed or lat or lng is not filled in yet
-        if (project._id) {
-            await Project.findById(project._id, (err, foundProject) => {
-                if (err) console.log(err)
-                else {
-                    if (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat) {
-                        axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-                            params: {
-                                key: process.env.GMAPSAPIKEY,
-                                address: `${project.street.replace(/ /,"+")}+${project.postalCode}`
-                            }
-                        })
-                        .then(function ({data}) {
-                            // console.log(response)
-                            if (data.status == "OK") {
-                                project.lat = data.results[0].geometry.location.lat
-                                project.lng = data.results[0].geometry.location.lng
-                            }
-                            
-                        })
-                        .catch(function (error) {
-                            console.log(error)
-                        })
-                    }
+        await Project.findById(project._id, (err, foundProject) => {
+            if (err) console.log(err)
+            else {
+                if (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat)) {
+                    axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                        params: {
+                            key: process.env.GMAPSAPIKEY,
+                            address: `${project.street.replace(/ /,"+")}+${project.postalCode}`
+                        }
+                    })
+                    .then(function ({data}) {
+                        // console.log(response)
+                        if (data.status == "OK") {
+                            project.lat = data.results[0].geometry.location.lat
+                            project.lng = data.results[0].geometry.location.lng
+                        }
+                        
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
                 }
-            })
-        }
+            }
+        })        
 
         await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
             if (err) console.log(err)
-            else res.status(200).json({ projectId: savedProject._id})
+            else res.status(200).json({ projectId: project._id})
         });
     } else {
         return res.status(401).send('Unauthorized request')
