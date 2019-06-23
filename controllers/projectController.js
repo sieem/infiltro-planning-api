@@ -1,12 +1,12 @@
 const Project = require('../models/project')
 const axios = require('axios')
 
-exports.saveProject = async (req, res) => {
+exports.saveProject = (req, res) => {
     if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
         let project = new Project(req.body)
 
         // check if address changed or lat or lng is not filled in yet
-        await Project.findById(project._id, (err, foundProject) => {
+        Project.findById(project._id, (err, foundProject) => {
             if (err) console.log(err)
             else {
                 if (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat)) {
@@ -17,24 +17,28 @@ exports.saveProject = async (req, res) => {
                         }
                     })
                     .then(function ({data}) {
-                        // console.log(response)
                         if (data.status == "OK") {
                             project.lat = data.results[0].geometry.location.lat
                             project.lng = data.results[0].geometry.location.lng
                         }
-                        
+                        Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+                            if (err) console.log(err)
+                            else res.status(200).json({ projectId: project._id })
+                        });
                     })
                     .catch(function (error) {
                         console.log(error)
                     })
+                } else {
+                    Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+                        if (err) console.log(err)
+                        else res.status(200).json({ projectId: project._id })
+                    });
                 }
             }
         })        
 
-        await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
-            if (err) console.log(err)
-            else res.status(200).json({ projectId: project._id})
-        });
+        
     } else {
         return res.status(401).send('Unauthorized request')
     }
