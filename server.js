@@ -23,6 +23,8 @@ mongoose.connect(db, { useNewUrlParser: true }, err => {
     }
 })
 
+mongoose.set('useFindAndModify', false)
+
 app.use('/api', routes);
 
 app.use(function (req, res, next) {
