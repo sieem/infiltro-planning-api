@@ -11,6 +11,8 @@ const schema = {
     city: String,
     postalCode: String,
     extraInfoAddress: String,
+    lng: Number,
+    lat: Number,
     name: String,
     tel: String,
     email: String,
