@@ -21,6 +21,7 @@ const schema = {
     ATest: String,
     v50Value: String,
     protectedVolume: String,
+    EpbNumber: String,
     executor: String,
     datePlanned: Date,
     hourPlanned: String,
