@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 
 const schema = {
-    name: String
+    name: String,
+    email: String
 }
 
 module.exports = mongoose.model('company', schema)
