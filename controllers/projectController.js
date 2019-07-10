@@ -33,7 +33,7 @@ exports.saveProject = (req, res) => {
                     Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
                         if (err) console.log(err)
                         else res.status(200).json({ projectId: project._id })
-                    });
+                    })
                 }
             }
         })        
