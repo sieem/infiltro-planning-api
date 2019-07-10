@@ -8,11 +8,9 @@ exports.getCompanies = (req, res) => {
 
 exports.saveCompany = (req, res) => {
     let company = new Company(req.body)
-    company.save((err, company) => {
+    Company.findByIdAndUpdate(company._id, company, { upsert: true }, function (err, savedCompany) {
         if (err) console.log(err)
-        else {
-            res.json(company)
-        }
+        else res.status(200).json(savedCompany)
     })
 }
 
