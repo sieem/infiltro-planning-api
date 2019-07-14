@@ -70,7 +70,7 @@ if (process.env.NODE_ENV == "production") {
     });
 
     // setting redirect for non http traffic
-    const httpServer = http.createServer();
+    const httpServer = http.createServer(app);
 
     httpServer.get('*', (req, res) => res.redirect(`https://${req.headers.host}${req.url}`))
 
