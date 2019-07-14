@@ -16,6 +16,7 @@ router.post('/login', upload.none(), authController.loginUser)
 router.get('/get-users', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.getUsers)
 router.get('/get-user/:userId', authController.getUser)
 router.post('/update-user', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.editUser)
+router.delete('/remove-user/:userId', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.removeCompany)
 
 router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProjects)
 router.get('/get-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProject)
