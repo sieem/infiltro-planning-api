@@ -70,16 +70,10 @@ if (process.env.NODE_ENV == "production") {
     });
 
     // setting redirect for non http traffic
-    const httpServer = http.createServer(app);
-
-    httpServer.get('*', (req, res) => res.redirect(`https://${req.headers.host}${req.url}`))
-
-    httpServer.listen(80, err => {
-        if (err) {
-            return console.error(err);
-        }
-        console.log(`App listening on port ${httpServer.address().port} Non-SSL`);
-    });
+    http.createServer(function (req, res) {
+        res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+        res.end();
+    }).listen(80);
 }
 else if (process.env.NODE_ENV == "development") {
     const httpServer = http.createServer(app);
