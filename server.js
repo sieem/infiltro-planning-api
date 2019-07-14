@@ -44,7 +44,7 @@ app.use(function (req, res, next) {
 
 });
 
-app.use(express.static(staticRoot));
+app.use(express.static(staticRoot, { dotfiles: 'allow' } ));
 
 app.listen(port, () => {
     console.log(`Server running on localhost:${port}`)
