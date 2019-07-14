@@ -62,11 +62,23 @@ if (process.env.NODE_ENV == "production") {
     };
 
     const httpsServer = https.createServer(credentials, app);
-    httpsServer.listen(process.env.PORT || 3000, err => {
+    httpsServer.listen(process.env.PORT, err => {
         if (err) {
             return console.error(err);
         }
         console.log(`App listening on port ${httpsServer.address().port} SSL`);
+    });
+
+    // setting redirect for non http traffic
+    const httpServer = http.createServer();
+
+    httpServer.get('*', (req, res) => res.redirect(`https://${req.headers.host}${req.url}`))
+
+    httpServer.listen(80, err => {
+        if (err) {
+            return console.error(err);
+        }
+        console.log(`App listening on port ${httpServer.address().port} Non-SSL`);
     });
 }
 else if (process.env.NODE_ENV == "development") {
