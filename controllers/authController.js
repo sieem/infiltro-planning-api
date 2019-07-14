@@ -6,10 +6,14 @@ const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 exports.getUsers = (req, res) => {
-    User.find({}, (err, users) => {
-        if (err) console.log(err)
-        else res.status(200).json(users)
-    })
+    if (req.user.role === 'admin') {
+        User.find({}, (err, users) => {
+            if (err) console.log(err)
+            else res.status(200).json(users)
+        })
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }   
 }
 
 exports.getUser = (req, res) => {
@@ -77,7 +81,6 @@ exports.addUser = async (req, res) => {
     } else {
         return res.status(401).send('Unauthorized request')
     }
-    
 }
 
 exports.registerUser = (req, res) => {
@@ -101,5 +104,16 @@ exports.registerUser = (req, res) => {
             })
         }
     })
-    
+}
+
+exports.editUser = (req, res) => {
+    if (req.user.role === 'admin') {
+        let user = new User(req.body)
+        User.findByIdAndUpdate(user._id, user, { upsert: true }, function (err, savedUser) {
+            if (err) console.log(err)
+            else res.status(200).json(user)
+        })
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
 }

@@ -72,10 +72,14 @@ exports.getProject = (req, res) => {
 }
 
 exports.removeProject = (req, res) => {
-    Project.deleteOne({ _id: req.params.projectId }, (err, project) => {
-        if (err) console.log(err)
-        else {
-            res.json(project)
-        }
-    })
+    if (req.user.role === 'admin') {
+        Project.deleteOne({ _id: req.params.projectId }, (err, project) => {
+            if (err) console.log(err)
+            else {
+                res.json(project)
+            }
+        })
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
 }
