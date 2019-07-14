@@ -117,3 +117,16 @@ exports.editUser = (req, res) => {
         return res.status(401).send('Unauthorized request')
     }
 }
+
+exports.removeUser = (req, res) => {
+    if (req.user.role === 'admin') {
+        User.deleteOne({ _id: req.params.userId }, (err, user) => {
+            if (err) console.log(err)
+            else {
+                res.json(user)
+            }
+        })
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
+}
