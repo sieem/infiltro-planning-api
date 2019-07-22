@@ -2,6 +2,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const mailService = require('../services/mailService')
+const authService = require('../services/authService')
 const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
@@ -16,6 +17,7 @@ exports.getUsers = (req, res) => {
     }   
 }
 
+//unused for now
 exports.getUser = (req, res) => {
     User.findById(req.params.userId, (err, user) => {
         if (err) console.log(err)
@@ -25,6 +27,15 @@ exports.getUser = (req, res) => {
             } else {
                 return res.status(401).send('Unauthorized request')
             }
+        }
+    })
+}
+
+exports.getUserByResetToken = (req, res) => {
+    User.findOne({ resetToken: req.params.resetToken}, (err, user) => {
+        if (err) console.log(err)
+        else {
+            res.status(200).json(user._id)
         }
     })
 }
@@ -51,24 +62,26 @@ exports.loginUser = (req, res) => {
     })
 }
 
-exports.addUser = async (req, res) => {
+exports.addUser = (req, res) => {
     if (req.user.role === 'admin') {
-        User.findOne({ email: req.body.email }, (err, user) => {
+        User.findOne({ email: req.body.email }, async (err, user) => {
             if (err) console.log(err)
             else {
                 if (user)
                     res.status(401).send('Email already exists')
                 else {
                     let user = new User(req.body)
+                    user.resetToken = await authService.generateToken()
+
                     user.save((err, user) => {
                         if (err) console.log(err)
                         else {
-                            let mail = new mailService({
+                            const mail = new mailService({
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: user.email,
                                 subject: "Je bent toegevoegd op planning.infiltro.be",
-                                text: `Gelieve je registratie af te ronden op ${process.env.BASE_URL}/register/${user._id}`,
-                                html: `Gelieve je registratie af te ronden op <a href="${process.env.BASE_URL}/register/${user._id}">${process.env.BASE_URL}/register/${user._id}</a>`
+                                text: `Gelieve je registratie af te ronden op ${process.env.BASE_URL}/registreer/${user.resetToken}`,
+                                html: `Gelieve je registratie af te ronden op <a href="${process.env.BASE_URL}/registreer/${user.resetToken}">${process.env.BASE_URL}/registreer/${user.resetToken}</a>`
                             })
                             mail.send()
                             
@@ -92,6 +105,7 @@ exports.registerUser = (req, res) => {
             bcrypt.hash(user.password, saltRounds, (err, hash) => {
                 if (err) console.log(err)
                 user.password = hash;
+                user.resetToken = '';
 
                 user.save((err, user) => {
                     if (err) console.log(err)
@@ -102,6 +116,36 @@ exports.registerUser = (req, res) => {
                     }
                 })
             })
+        }
+    })
+}
+
+
+
+exports.resetPassword = (req, res) => {
+    User.findOne({ email: req.body.email }, async (err, user) => {
+        if (err) console.log(err)
+        else {
+            if (!user) return res.status(401).send('Unauthorized request: no user found with given email')
+            else {
+                user.resetToken = await authService.generateToken()
+
+                user.save((err, user) => {
+                    if (err) console.log(err)
+                    else {
+                        let mail = new mailService({
+                            from: '"Infiltro" <noreply@infiltro.be>',
+                            to: user.email,
+                            subject: "Wachtwoord reset aangevraagd",
+                            text: `Gelieve je wachtwoord te herstellen door naar volgende url te surfen: ${process.env.BASE_URL}/herstel-wachtwoord/${user.resetToken}`,
+                            html: `Gelieve je wachtwoord te herstellen door naar volgende url te surfen: <a href="${process.env.BASE_URL}/herstel-wachtwoord/${user.resetToken}">${process.env.BASE_URL}/herstel-wachtwoord/${user.resetToken}</a>`
+                        })
+                        mail.send()
+
+                        res.status(200).json("")
+                    }
+                })
+            }            
         }
     })
 }
