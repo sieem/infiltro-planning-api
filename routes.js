@@ -15,6 +15,8 @@ router.post('/register', upload.none(), authController.registerUser)
 router.post('/login', upload.none(), authController.loginUser)
 router.get('/get-users', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.getUsers)
 router.get('/get-user/:userId', authController.getUser)
+router.get('/get-user-by-resettoken/:resetToken', authController.getUserByResetToken)
+router.post('/reset-password', upload.none(), authController.resetPassword)
 router.post('/edit-user', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.editUser)
 router.delete('/remove-user/:userId', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.removeUser)
 
