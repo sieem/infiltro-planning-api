@@ -45,7 +45,7 @@ exports.saveProject = (req, res) => {
 }
 
 exports.getProjects = (req, res) => {
-    let findParameters = { company: req.user.company }
+    let findParameters = (req.user.role === 'admin') ? {} : { company: req.user.company }
     if(req.user.role === 'admin') {
         findParameters = {}
     }
