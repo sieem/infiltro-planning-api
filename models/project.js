@@ -4,7 +4,7 @@ const schema = {
     company: String,
     dateCreated: Date,
     projectType: String,
-    houseAmount: Number,
+    houseAmount: String,
     projectName: String,
     client: String,
     street: String,
