@@ -1,12 +1,14 @@
 const Project = require('../models/project')
 const axios = require('axios')
+const mailService = require('../services/mailService')
+
 
 exports.saveProject = (req, res) => {
     if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
         let project = new Project(req.body)
 
         // check if address changed or lat or lng is not filled in yet
-        Project.findById(project._id, (err, foundProject) => {
+        Project.findById(project._id, async (err, foundProject) => {
             if (err) console.log(err)
             else {
                 if (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat)) {
@@ -29,12 +31,35 @@ exports.saveProject = (req, res) => {
                     .catch(function (error) {
                         console.log(error)
                     })
-                } else {
-                    Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
-                        if (err) console.log(err)
-                        else res.status(200).json({ projectId: project._id })
-                    })
                 }
+                
+                await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+                    if (err) console.log(err)
+                    else {
+                        if (!foundProject) {
+                            let mail = new mailService({
+                                from: '"Infiltro" <noreply@infiltro.be>',
+                                to: '"David Lasseel" <david.lasseel@link-x.be>',
+                                subject: `Nieuw project aangemaakt: ${project.projectName}`,
+                                text: `Project '${project.projectName}' is toegevoegd door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
+                                html: `Project '${project.projectName}' is toegevoegd door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${project._id}">${process.env.BASE_URL}/project/${project._id}</a>`
+                            })
+                            mail.send()
+                        }
+                        if (foundProject && project.status !== foundProject.status) {
+                            let mail = new mailService({
+                                from: '"Infiltro" <noreply@infiltro.be>',
+                                to: '"David Lasseel" <david.lasseel@link-x.be>',
+                                subject: `Projectstatus gewijzigd: ${project.projectName}`,
+                                text: `Status van project '${project.projectName}' is gewijzigd door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
+                                html: `Status van project '${project.projectName}' is gewijzigd door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${savedProject._id}">${process.env.BASE_URL}/project/${savedProject._id}</a>`
+                            })
+                            mail.send()
+                        }
+
+                        res.status(200).json({ projectId: project._id })
+                    }
+                })
             }
         })        
 
