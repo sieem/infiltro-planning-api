@@ -41,8 +41,8 @@ exports.saveProject = (req, res) => {
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@link-x.be>',
                                 subject: `Nieuw project aangemaakt: ${project.projectName}`,
-                                text: `Project '${project.projectName}' is toegevoegd door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
-                                html: `Project '${project.projectName}' is toegevoegd door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${project._id}">${process.env.BASE_URL}/project/${project._id}</a>`
+                                text: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
+                                html: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: <a href="${process.env.BASE_URL}/project/${project._id}">${process.env.BASE_URL}/project/${project._id}</a>`
                             })
                             mail.send()
                         }
@@ -51,8 +51,8 @@ exports.saveProject = (req, res) => {
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@link-x.be>',
                                 subject: `Projectstatus gewijzigd: ${project.projectName}`,
-                                text: `Status van project '${project.projectName}' is gewijzigd door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
-                                html: `Status van project '${project.projectName}' is gewijzigd door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${savedProject._id}">${process.env.BASE_URL}/project/${savedProject._id}</a>`
+                                text: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
+                                html: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${savedProject._id}">${process.env.BASE_URL}/project/${savedProject._id}</a>`
                             })
                             mail.send()
                         }
