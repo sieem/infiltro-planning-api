@@ -24,6 +24,7 @@ router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDe
 router.get('/get-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProject)
 router.post('/save-project', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.saveProject)
 router.delete('/remove-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.removeProject)
+router.post('/batch-projects', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.batchProjects)
 
 router.get('/get-companies', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.getCompanies)
 router.post('/save-company', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.saveCompany)
