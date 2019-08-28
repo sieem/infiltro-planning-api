@@ -108,3 +108,21 @@ exports.removeProject = (req, res) => {
         return res.status(401).send('Unauthorized request')
     }
 }
+
+exports.batchProjects = async (req, res) => {
+    if (req.user.role === 'admin') {
+        const statusToChange = req.body.status
+        const projectsToChange = req.body.projects
+
+        for (const projectToChange of projectsToChange) {
+            const project = new Project(projectToChange)
+            project.status = statusToChange
+            await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+                if (err) console.log(err)
+            })
+        }
+        res.json({})
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
+}
