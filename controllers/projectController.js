@@ -36,7 +36,8 @@ exports.saveProject = (req, res) => {
                 await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
                     if (err) console.log(err)
                     else {
-                        if (!foundProject) {
+                        const idDavid = '5d4c733e65469039e2dd5acf'
+                        if (!foundProject && req.user._id !== idDavid) {
                             let mail = new mailService({
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
@@ -46,7 +47,7 @@ exports.saveProject = (req, res) => {
                             })
                             mail.send()
                         }
-                        if (foundProject && project.status !== foundProject.status) {
+                        if (foundProject && project.status !== foundProject.status && req.user._id !== idDavid) {
                             let mail = new mailService({
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
