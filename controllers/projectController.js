@@ -37,7 +37,7 @@ exports.saveProject = (req, res) => {
                     if (err) console.log(err)
                     else {
                         const idDavid = '5d4c733e65469039e2dd5acf'
-                        if (!foundProject && req.user._id !== idDavid) {
+                        if (!foundProject && req.user.id !== idDavid) {
                             let mail = new mailService({
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
@@ -47,7 +47,7 @@ exports.saveProject = (req, res) => {
                             })
                             mail.send()
                         }
-                        if (foundProject && project.status !== foundProject.status && req.user._id !== idDavid) {
+                        if (foundProject && project.status !== foundProject.status && req.user.id !== idDavid) {
                             let mail = new mailService({
                                 from: '"Infiltro" <noreply@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
