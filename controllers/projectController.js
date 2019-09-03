@@ -15,7 +15,7 @@ exports.saveProject = (req, res) => {
                     axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
                         params: {
                             key: process.env.GMAPSAPIKEY,
-                            address: `${project.street.replace(/ /,"+")}+${project.postalCode}`
+                            address: `${project.street.replace(/ /,"+")}+${project.postalCode}+${project.city}`
                         }
                     })
                     .then(function ({data}) {
