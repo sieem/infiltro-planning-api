@@ -115,9 +115,9 @@ exports.batchProjects = async (req, res) => {
         const projectsToChange = req.body.projects
 
         for (const projectToChange of projectsToChange) {
-            const project = new Project(projectToChange)
-            project.status = statusToChange
-            await Project.findByIdAndUpdate(project._id, project, { upsert: true }, function (err, savedProject) {
+            await Project.updateOne({ _id: projectToChange._id }, {
+                status: statusToChange
+            }, function (err, affected, resp) {
                 if (err) console.log(err)
             })
         }
