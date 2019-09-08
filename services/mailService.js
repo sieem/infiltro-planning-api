@@ -1,8 +1,17 @@
 const nodemailer = require("nodemailer");
-
+    
 module.exports = class Mail {
     constructor(mailData) {
         this.mailData = mailData
+
+        this.textPersonalSignature = "\nDavid Lasseel\nM: + 32 (0) 498 92 49 42\nwww.infiltro.be"
+        this.htmlPersonalSignature = `
+            <p>David Lasseel<br>
+            M: + 32 (0) 498 92 49 42<br>
+            <img src="${process.env.BASE_URL}/assets/images/infiltro_mail.png" alt="infiltro logo" width="200" height="48" /><br>
+            <a href="https://www.infiltro.be">www.infiltro.be</a>
+            </p>
+        `
     }
 
     async init() {
@@ -42,6 +51,11 @@ module.exports = class Mail {
     async send() {
         if(!this.transporter) {
             await this.init()
+        }
+        
+        if (this.mailData.personalSignature) {
+            this.mailData.text += this.textPersonalSignature
+            this.mailData.html += this.htmlPersonalSignature
         }
 
         let info = await this.transporter.sendMail(this.mailData)

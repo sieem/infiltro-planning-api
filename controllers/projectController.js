@@ -126,3 +126,40 @@ exports.batchProjects = async (req, res) => {
         return res.status(401).send('Unauthorized request')
     }
 }
+
+
+exports.sendProjectMail = async (req, res) => {
+    if (req.user.role === 'admin') {
+        const mailForm = req.body
+        const htmlMailBody = "<p>" + mailForm.body.replace(/\n/g, "</p><p>") + "</p>"
+
+        //send mail
+        const mail = new mailService({
+            from: '"Infiltro" <noreply@infiltro.be>',
+            to: mailForm.to,
+            subject: mailForm.subject,
+            text: mailForm.body,
+            html: htmlMailBody,
+            personalSignature: true
+        })
+        mail.send()
+
+        const mailObject = {
+            sendBy: req.user._id,
+            sendTo: mailForm.to,
+            dateSent: new Date(),
+            mailBody: htmlMailBody
+        }
+
+        // save mail intro database
+        Project.updateOne({ _id: mailForm._id }, {
+            $push: { mails: mailObject }
+        }, function (err, affected, resp) {
+            if (err) console.log(err)
+            else res.json({})
+        })
+        
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
+}

@@ -27,7 +27,8 @@ const schema = {
     hourPlanned: String,
     status: String,
     comments: String,
-    invoiced: Boolean
+    invoiced: Boolean,
+    mails: Array
 }
 
 module.exports = mongoose.model('project', schema)
