@@ -148,7 +148,7 @@ exports.sendProjectMail = async (req, res) => {
             sender: req.user._id,
             receiver: mailForm.to,
             dateSent: new Date(),
-            mailBody: htmlMailBody
+            body: htmlMailBody
         }
 
         // save mail intro database
