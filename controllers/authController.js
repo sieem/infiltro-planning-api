@@ -7,17 +7,12 @@ const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 exports.getUsers = (req, res) => {
-    if (req.user.role === 'admin') {
-        User.find({}, (err, users) => {
-            if (err) console.log(err)
-            else res.status(200).json(users)
-        })
-    } else {
-        User.find({companyId: req.user.company}, (err, users) => {
-            if (err) console.log(err)
-            else res.status(200).json(users)
-        })
-    }   
+    const findParameters = (req.user.role === 'admin') ? {} : { company: req.user.company }
+
+    User.find(findParameters, (err, users) => {
+        if (err) console.log(err)
+        else res.status(200).json(users)
+    })
 }
 
 //unused for now
