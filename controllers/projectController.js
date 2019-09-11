@@ -1,7 +1,11 @@
+const mongoose = require('mongoose')
 const Project = require('../models/project')
 const axios = require('axios')
 const mailService = require('../services/mailService')
 
+exports.generateProjectId = (req,res) => {
+    res.status(200).send(mongoose.Types.ObjectId())
+}
 
 exports.saveProject = (req, res) => {
     if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
