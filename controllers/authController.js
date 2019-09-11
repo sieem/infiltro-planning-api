@@ -13,7 +13,10 @@ exports.getUsers = (req, res) => {
             else res.status(200).json(users)
         })
     } else {
-        return res.status(401).send('Unauthorized request')
+        User.find({companyId: req.user.company}, (err, users) => {
+            if (err) console.log(err)
+            else res.status(200).json(users)
+        })
     }   
 }
 
