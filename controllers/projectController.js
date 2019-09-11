@@ -135,11 +135,12 @@ exports.batchProjects = async (req, res) => {
 exports.sendProjectMail = async (req, res) => {
     if (req.user.role === 'admin') {
         const mailForm = req.body
-        const htmlMailBody = "<p>" + mailForm.body.replace(/\n/g, "</p><p>") + "</p>"
+        const htmlMailBody = mailForm.body.replace(/\n/g, "</br>")
 
         //send mail
         const mail = new mailService({
-            from: '"Infiltro" <noreply@infiltro.be>',
+            from: `"${req.user.name}" <${req.user.email}>`,
+            bcc: 'info@infiltro.be',
             to: mailForm.to,
             subject: mailForm.subject,
             text: mailForm.body,
