@@ -20,6 +20,7 @@ router.post('/reset-password', upload.none(), authController.resetPassword)
 router.post('/edit-user', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.editUser)
 router.delete('/remove-user/:userId', authMiddleware.verifyToken, authMiddleware.getUserDetails, authController.removeUser)
 
+router.get('/generate-project-id', authMiddleware.verifyToken, projectController.generateProjectId)
 router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProjects)
 router.get('/get-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProject)
 router.post('/save-project', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.saveProject)
