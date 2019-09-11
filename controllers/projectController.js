@@ -146,13 +146,13 @@ exports.sendProjectMail = async (req, res) => {
             html: htmlMailBody,
             personalSignature: true
         })
-        mail.send()
+        await mail.send()
 
         const mailObject = {
             sender: req.user._id,
             receiver: mailForm.to,
             dateSent: new Date(),
-            body: htmlMailBody
+            body: mail.getHtml()
         }
 
         // save mail intro database

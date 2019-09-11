@@ -66,4 +66,8 @@ module.exports = class Mail {
 
         return nodemailer.getTestMessageUrl(info)
     }
+
+    getHtml() {
+        return this.mailData.html
+    }
 }
