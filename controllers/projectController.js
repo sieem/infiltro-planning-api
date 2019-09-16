@@ -137,9 +137,11 @@ exports.sendProjectMail = async (req, res) => {
         const mailForm = req.body
         const htmlMailBody = mailForm.body.replace(/\n/g, "</br>")
 
+        console.log(`"${req.user.name}" <${req.user.email}>`)
         //send mail
         const mail = new mailService({
-            from: `"${req.user.name}" <${req.user.email}>`,
+            from: '"Infiltro" <info@infiltro.be>',
+            replyTo: `"${req.user.name}" <${req.user.email}>`,
             bcc: 'info@infiltro.be',
             to: mailForm.to,
             subject: mailForm.subject,
