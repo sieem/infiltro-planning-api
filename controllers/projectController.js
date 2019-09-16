@@ -43,7 +43,7 @@ exports.saveProject = (req, res) => {
                         const idDavid = '5d4c733e65469039e2dd5acf'
                         if (!foundProject && req.user.id !== idDavid) {
                             let mail = new mailService({
-                                from: '"Infiltro" <noreply@infiltro.be>',
+                                from: '"Infiltro" <planning@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
                                 subject: `Nieuw project aangemaakt: ${project.projectName}`,
                                 text: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
@@ -53,7 +53,7 @@ exports.saveProject = (req, res) => {
                         }
                         if (foundProject && project.status !== foundProject.status && req.user.id !== idDavid) {
                             let mail = new mailService({
-                                from: '"Infiltro" <noreply@infiltro.be>',
+                                from: '"Infiltro" <planning@infiltro.be>',
                                 to: '"David Lasseel" <david.lasseel@gmail.com>',
                                 subject: `Projectstatus gewijzigd: ${project.projectName}`,
                                 text: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
@@ -140,7 +140,7 @@ exports.sendProjectMail = async (req, res) => {
         console.log(`"${req.user.name}" <${req.user.email}>`)
         //send mail
         const mail = new mailService({
-            from: '"Infiltro" <info@infiltro.be>',
+            from: '"Infiltro" <planning@infiltro.be>',
             replyTo: `"${req.user.name}" <${req.user.email}>`,
             bcc: 'info@infiltro.be',
             to: mailForm.to,

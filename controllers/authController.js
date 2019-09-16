@@ -75,7 +75,7 @@ exports.addUser = (req, res) => {
                         if (err) console.log(err)
                         else {
                             const mail = new mailService({
-                                from: '"Infiltro" <noreply@infiltro.be>',
+                                from: '"Infiltro" <planning@infiltro.be>',
                                 to: user.email,
                                 subject: "Je bent toegevoegd op planning.infiltro.be",
                                 text: `Gelieve je registratie af te ronden op ${process.env.BASE_URL}/registreer/${user.resetToken}`,
@@ -132,7 +132,7 @@ exports.resetPassword = (req, res) => {
                     if (err) console.log(err)
                     else {
                         let mail = new mailService({
-                            from: '"Infiltro" <noreply@infiltro.be>',
+                            from: '"Infiltro" <planning@infiltro.be>',
                             to: user.email,
                             subject: "Wachtwoord reset aangevraagd",
                             text: `Gelieve je wachtwoord te herstellen door naar volgende url te surfen: ${process.env.BASE_URL}/herstel-wachtwoord/${user.resetToken}`,
