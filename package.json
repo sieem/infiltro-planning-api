@@ -26,6 +26,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "fs-extra": "^8.1.0",
+    "googleapis": "^39.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.5.11",
     "multer": "^1.4.1",
