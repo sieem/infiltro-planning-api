@@ -4,6 +4,7 @@ const Company = require('../models/company')
 const axios = require('axios')
 const mailService = require('../services/mailService')
 const calendarService = require('../services/calendarService')
+const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
     res.status(200).send(mongoose.Types.ObjectId())
@@ -39,7 +40,6 @@ exports.saveProject = (req, res) => {
                     })
                 }
                 if (!foundProject || (project.datePlanned && project.hourPlanned && project.status == 'planned')) {
-                    const calendar = new calendarService()
                     const startDateTime = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
                     const companyQuery = await Company.findById(project.company).exec()
                     const event = {
@@ -135,11 +135,15 @@ exports.getProject = (req, res) => {
     })
 }
 
-exports.removeProject = (req, res) => {
+exports.removeProject = async (req, res) => {
     if (req.user.role === 'admin') {
+        const foundProject = await Project.findById(req.params.projectId).exec()
+        if (foundProject.calendarId && foundProject.eventId) {
+            calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
+        }
         Project.updateOne({ _id: req.params.projectId }, {
             status: "deleted"
-        }, function (err, affected, resp) {
+        }, function (err, affected, resp) {            
             res.json(resp)
         })
     } else {
