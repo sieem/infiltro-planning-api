@@ -70,7 +70,7 @@ module.exports = class Calendar {
                 resource: event,
             }, (err, res) => {
                 if (err) reject('Couldn\'t insert event: ' + err);
-                resolve({eventId:event.data.id, calendarId: event.data.organizer.email});
+                resolve({eventId:res.data.id, calendarId: res.data.organizer.email});
             });
         }) 
     }
