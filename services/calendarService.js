@@ -41,7 +41,24 @@ module.exports = class Calendar {
         
     }
 
-    addEvent(event) {
+    findEvent(calendarId, eventId) {
+        if (!this.oAuth2Client) {
+            this.init();
+        }
+        return new Promise((resolve, reject) => {
+            const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+            calendar.events.get({
+                auth: this.oAuth2Client,
+                calendarId,
+                eventId
+            }, (err, res) => {
+                if (err) reject('There was an error contacting the Calendar service: ' + err);
+                resolve(res);
+            });
+        })
+    }
+
+    addEvent(executor,event) {
         if (!this.oAuth2Client) {
             this.init();
         }
@@ -49,15 +66,86 @@ module.exports = class Calendar {
             const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
             calendar.events.insert({
                 auth: this.oAuth2Client,
-                calendarId: process.env.CALENDAR_TOGETHER,
+                calendarId: process.env['CALENDAR_' + executor.toUpperCase()],
                 resource: event,
-            }, function (err, event) {
-                if (err) {
-                    reject('There was an error contacting the Calendar service: ' + err);
-                }
+            }, (err, res) => {
+                if (err) reject('Couldn\'t insert event: ' + err);
                 resolve({eventId:event.data.id, calendarId: event.data.organizer.email});
             });
         }) 
+    }
+
+    updateEvent(calendarId, eventId, executor, event) {
+        if (!this.oAuth2Client) {
+            this.init();
+        }
+        return new Promise((resolve, reject) => {
+            const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+            if (calendarId == process.env['CALENDAR_' + executor.toUpperCase()]) {
+                calendar.events.update({
+                    auth: this.oAuth2Client,
+                    resource: event,
+                    eventId,
+                    calendarId
+                }, (err, res) => {
+                    if (err) reject('Couldn\'t update event: ' + err);
+                    resolve({ eventId: res.data.id, calendarId: res.data.organizer.email });
+                });
+            } else {
+                calendar.events.delete({
+                    auth: this.oAuth2Client,
+                    eventId,
+                    calendarId
+                }, (err, res) => {
+                    if (err) reject('Couldn\'t delete event: ' + err);
+                    calendar.events.insert({
+                        auth: this.oAuth2Client,
+                        calendarId: process.env['CALENDAR_' + executor.toUpperCase()],
+                        resource: event,
+                    }, (err, res) => {
+                        if (err) reject('Couldn\'t insert event after deletion: ' + err);
+                        resolve({ eventId: res.data.id, calendarId: res.data.organizer.email });
+                    });
+                });
+            }
+            
+        })
+    }
+
+    deleteEvent(calendarId, eventId) {
+        if (!this.oAuth2Client) {
+            this.init();
+        }
+        return new Promise((resolve, reject) => {
+            const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+            calendar.events.delete({
+                auth: this.oAuth2Client,
+                eventId,
+                calendarId
+            }, (err, res) => {
+                if (err) reject('Couldn\'t delete event: ' + err);
+                resolve(res);
+            });
+
+        })
+    }
+
+    
+
+    combineDateHour(date, hour) {
+        const dateWithHours = new Date(date.setHours(hour.split(':')[0]))
+        const dateWithHoursAndMinutes = new Date(dateWithHours.setMinutes(hour.split(':')[1]))
+        return dateWithHoursAndMinutes
+    }
+
+    addHours(date, time) {
+        if (typeof time === 'string') {
+            const hours = time.split(':')[0]
+            const minutes = time.split(':')[1]
+            return new Date(date.getTime() + (hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
+        } else {
+            return new Date(date.getTime() + time)
+        }
     }
 
 }
