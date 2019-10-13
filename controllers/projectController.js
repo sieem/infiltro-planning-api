@@ -106,7 +106,7 @@ exports.saveProject = (req, res) => {
                             mail.send()
                         }
 
-                        res.status(200).json({ projectId: project._id })
+                        res.status(200).json(project)
                     }
                 })
             }
