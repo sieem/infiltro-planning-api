@@ -40,7 +40,7 @@ exports.saveProject = (req, res) => {
                         console.log(error)
                     })
                 }
-                if (project.datePlanned && project.hourPlanned && project.status == 'planned') {
+                if (project.datePlanned && project.hourPlanned && project.status == 'planned' && project.executor) {
                     const startDateTime = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
                     const companyQuery = await Company.findById(project.company).exec()
                     const event = {
