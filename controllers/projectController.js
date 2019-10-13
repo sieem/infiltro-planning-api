@@ -46,7 +46,7 @@ exports.saveProject = (req, res) => {
                     const event = {
                         summary: `${companyQuery.name} ${project.projectName}`,
                         location: `${project.street} ${project.postalCode} ${project.city}`,
-                        description: `${project.name} ${project.tel}\nA-Test: ${project.ATest || 'onbekend'} m²\nEPB nr: ${project.EpbNumber || 'onbekend'}`,
+                        description: `Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${project.ATest || 'onbekend'} m²\nv50-waarde: ${project.v50Value || 'onbekend'}m³/h.m²\nBeschermd volume: ${project.protectedVolume || 'onbekend'}m³\nEPB nr: ${project.EpbNumber || 'onbekend'}\nOpmerkingen: ${project.comments}`,
                         start: {
                             dateTime: startDateTime,
                             timeZone: 'Europe/Brussels',
