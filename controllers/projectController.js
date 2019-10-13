@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Project = require('../models/project')
 const Company = require('../models/company')
 const axios = require('axios')
+const moment = require('moment')
 const mailService = require('../services/mailService')
 const calendarService = require('../services/calendarService')
 const calendar = new calendarService()
@@ -39,7 +40,7 @@ exports.saveProject = (req, res) => {
                         console.log(error)
                     })
                 }
-                if (!foundProject || (project.datePlanned && project.hourPlanned && project.status == 'planned')) {
+                if (project.datePlanned && project.hourPlanned && project.status == 'planned') {
                     const startDateTime = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
                     const companyQuery = await Company.findById(project.company).exec()
                     const event = {
@@ -47,25 +48,34 @@ exports.saveProject = (req, res) => {
                         location: `${project.street} ${project.postalCode} ${project.city}`,
                         description: `${project.name} ${project.tel}\nA-Test: ${project.ATest || 'onbekend'} m²\nEPB nr: ${project.EpbNumber || 'onbekend'}`,
                         start: {
-                            'dateTime': startDateTime,
-                            'timeZone': 'Europe/Brussels',
+                            dateTime: startDateTime,
+                            timeZone: 'Europe/Brussels',
                         },
                         end: {
-                            'dateTime': calendar.addHours(startDateTime, '1:30'),
-                            'timeZone': 'Europe/Brussels',
+                            dateTime: calendar.addHours(startDateTime, '1:30'),
+                            timeZone: 'Europe/Brussels',
                         }
                     }
-                    if (!foundProject.eventId && !foundProject.calendarId) {
+                    if (!foundProject || (!foundProject.eventId && !foundProject.calendarId)) {
+
                         const { eventId, calendarId } = await calendar.addEvent(project.executor, event)
                         project.eventId = eventId
                         project.calendarId = calendarId
                     } else {
                         const excistingCalendarEvent = await calendar.findEvent(foundProject.calendarId, foundProject.eventId)
-                        const eventDuration = new Date(excistingCalendarEvent.data.end.dateTime) - new Date(excistingCalendarEvent.data.start.dateTime)
-                        event.end.dateTime = calendar.addHours(event.start.dateTime, eventDuration)
-                        const { eventId, calendarId } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
-                        project.eventId = eventId
-                        project.calendarId = calendarId
+                        event.start.dateTime = excistingCalendarEvent.data.start.dateTime
+                        event.end.dateTime = excistingCalendarEvent.data.end.dateTime
+
+                        try {
+                            const { eventId, calendarId } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
+                            project.datePlanned = new Date(new Date(excistingCalendarEvent.data.start.dateTime).setHours(0)).setMinutes(0)
+                            project.hourPlanned = moment(excistingCalendarEvent.data.start.dateTime).format("HH:mm")
+                            project.eventId = eventId
+                            project.calendarId = calendarId
+                        } catch (error) {
+                            project.eventId = ''
+                            project.calendarId = ''
+                        }
                     }
 
                     
