@@ -74,11 +74,11 @@ exports.saveProject = async (req, res) => {
             }
             
             // save the project
-            const updatedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
+            const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
             
             // check if I have to send mails
             const idDavid = '5d4c733e65469039e2dd5acf'
-            if (!updatedProject && req.user.id !== idDavid) {
+            if (!savedProject && req.user.id !== idDavid) {
                 let mail = new mailService({
                     from: '"Infiltro" <planning@infiltro.be>',
                     to: '"David Lasseel" <david.lasseel@gmail.com>',
@@ -88,7 +88,7 @@ exports.saveProject = async (req, res) => {
                 })
                 mail.send()
             }
-            if (updatedProject && project.status !== updatedProject.status && req.user.id !== idDavid) {
+            if (savedProject && project.status !== savedProject.status && req.user.id !== idDavid) {
                 let mail = new mailService({
                     from: '"Infiltro" <planning@infiltro.be>',
                     to: '"David Lasseel" <david.lasseel@gmail.com>',
