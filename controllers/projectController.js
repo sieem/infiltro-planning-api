@@ -19,7 +19,7 @@ exports.saveProject = async (req, res) => {
         try {
             const foundProject = await Project.findById(project._id).exec()
 
-            if (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat)) {
+            if (!foundProject || (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat))) {
                 const {data} = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
                     params: {
                         key: process.env.GMAPSAPIKEY,
