@@ -27,7 +27,6 @@ const schema = {
     hourPlanned: String,
     status: String,
     comments: String,
-    invoiced: Boolean,
     mails: Array,
     calendarId: String,
     eventId: String
