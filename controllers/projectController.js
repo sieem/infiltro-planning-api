@@ -75,7 +75,6 @@ exports.saveProject = async (req, res) => {
             
             // save the project
             const updatedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
-            console.log(project.lng, project.lat)
             
             // check if I have to send mails
             const idDavid = '5d4c733e65469039e2dd5acf'
