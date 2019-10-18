@@ -52,23 +52,26 @@ exports.saveProject = async (req, res) => {
                 }
                 if (!foundProject || (!foundProject.eventId && !foundProject.calendarId)) {
 
-                    const { eventId, calendarId } = await calendar.addEvent(project.executor, event)
+                    const { eventId, calendarId, calendarLink } = await calendar.addEvent(project.executor, event)
                     project.eventId = eventId
                     project.calendarId = calendarId
+                    project.calendarLink = calendarLink
                 } else {
                     const excistingCalendarEvent = await calendar.findEvent(foundProject.calendarId, foundProject.eventId)
                     event.start.dateTime = excistingCalendarEvent.data.start.dateTime
                     event.end.dateTime = excistingCalendarEvent.data.end.dateTime
 
                     try {
-                        const { eventId, calendarId } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
+                        const { eventId, calendarId, calendarLink } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
                         project.datePlanned = moment(excistingCalendarEvent.data.start.dateTime).format("yyyy-MM-dd")
                         project.hourPlanned = moment(excistingCalendarEvent.data.start.dateTime).format("HH:mm")
                         project.eventId = eventId
                         project.calendarId = calendarId
+                        project.calendarLink = calendarLink
                     } catch (error) {
                         project.eventId = ''
                         project.calendarId = ''
+                        project.calendarLink = ''
                     }
                 }
             }
