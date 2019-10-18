@@ -25,6 +25,7 @@ router.get('/get-projects', authMiddleware.verifyToken, authMiddleware.getUserDe
 router.get('/get-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.getProject)
 router.post('/save-project', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.saveProject)
 router.delete('/remove-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.removeProject)
+router.post('/duplicate-project/', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.duplicateProject)
 router.post('/batch-projects', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.batchProjects)
 router.post('/send-project-mail', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.sendProjectMail)
 

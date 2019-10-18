@@ -151,6 +151,26 @@ exports.removeProject = async (req, res) => {
     }
 }
 
+exports.duplicateProject = async (req, res) => {
+    if (req.user.role === 'admin') {
+        try {
+            const foundProject = await Project.findById(req.body.projectId).exec()
+            foundProject.projectName = foundProject.projectName + ' (kopie)'
+            foundProject._id = mongoose.Types.ObjectId()
+
+            await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
+            res.json({ projectId: foundProject._id})
+
+        } catch (error) {
+            console.log(error)
+            return res.status(400).send(error)
+        }
+        
+    } else {
+        return res.status(401).send('Unauthorized request')
+    }
+}
+
 exports.batchProjects = async (req, res) => {
     if (req.user.role === 'admin') {
         const statusToChange = req.body.status
