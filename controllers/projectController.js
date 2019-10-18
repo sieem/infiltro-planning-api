@@ -158,8 +158,14 @@ exports.duplicateProject = async (req, res) => {
     if (req.user.role === 'admin') {
         try {
             const foundProject = await Project.findById(req.body.projectId).exec()
-            foundProject.projectName = foundProject.projectName + ' (kopie)'
             foundProject._id = mongoose.Types.ObjectId()
+            foundProject.projectName = foundProject.projectName + ' (kopie)'
+            foundProject.eventId = ''
+            foundProject.calendarId = ''
+            foundProject.calendarLink = ''
+            foundProject.status = 'toPlan'
+            foundProject.datePlanned = ''
+            foundProject.hourPlanned = ''
 
             await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
             res.json({ projectId: foundProject._id})
