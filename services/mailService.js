@@ -3,15 +3,29 @@ const nodemailer = require("nodemailer");
 module.exports = class Mail {
     constructor(mailData) {
         this.mailData = mailData
-
-        this.textPersonalSignature = "\nDavid Lasseel\nM: + 32 (0) 498 92 49 42\nwww.infiltro.be"
-        this.htmlPersonalSignature = `
-            <p>David Lasseel<br>
-            M: + 32 (0) 498 92 49 42<br>
-            <img src="${process.env.BASE_URL}/assets/images/infiltro_mail.png" alt="infiltro logo" width="200" height="48" /><br>
-            <a href="https://www.infiltro.be">www.infiltro.be</a>
-            </p>
-        `
+        
+        this.personalSignatures = {
+            david: {
+                text: "\nDavid Lasseel\nM: +32 (0) 498 92 49 42\nwww.infiltro.be",
+                html: `
+                    <p>David Lasseel<br>
+                    M: +32 (0) 498 92 49 42<br>
+                    <img src="${process.env.BASE_URL}/assets/images/infiltro_mail.png" alt="infiltro logo" width="200" height="48" /><br>
+                    <a href="https://www.infiltro.be">www.infiltro.be</a>
+                    </p>
+                `
+            },
+            roel: {
+                text: "\nRoel Berghman\nM: +32 (0) 474 950 713\nwww.infiltro.be",
+                html: `
+                    <p>Roel Berghman<br>
+                    M: +32 (0) 474 950 713<br>
+                    <img src="${process.env.BASE_URL}/assets/images/infiltro_mail.png" alt="infiltro logo" width="200" height="48" /><br>
+                    <a href="https://www.infiltro.be">www.infiltro.be</a>
+                    </p>
+                `
+            }
+        }
     }
 
     async init() {
@@ -54,8 +68,8 @@ module.exports = class Mail {
         }
         
         if (this.mailData.personalSignature) {
-            this.mailData.text += this.textPersonalSignature
-            this.mailData.html += this.htmlPersonalSignature
+            this.mailData.text += this.personalSignatures[user].text
+            this.mailData.html += this.personalSignatures[user].html
         }
 
         let info = await this.transporter.sendMail(this.mailData)

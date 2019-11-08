@@ -213,7 +213,8 @@ exports.sendProjectMail = async (req, res) => {
             subject: mailForm.subject,
             text: mailForm.body,
             html: htmlMailBody,
-            personalSignature: true
+            personalSignature: true,
+            user: req.user.name.toLowerCase()
         })
         await mail.send()
 
