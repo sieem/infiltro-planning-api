@@ -24,6 +24,16 @@ module.exports = class Mail {
                     <a href="https://www.infiltro.be">www.infiltro.be</a>
                     </p>
                 `
+            },
+            default: {
+                text: "\nInfiltro\nM: +32 (0) 498 92 49 42\nwww.infiltro.be",
+                html: `
+                    <p>Infiltro<br>
+                    M: +32 (0) 498 92 49 42<br>
+                    <img src="${process.env.BASE_URL}/assets/images/infiltro_mail.png" alt="infiltro logo" width="200" height="48" /><br>
+                    <a href="https://www.infiltro.be">www.infiltro.be</a>
+                    </p>
+                `
             }
         }
     }
@@ -68,8 +78,13 @@ module.exports = class Mail {
         }
         
         if (this.mailData.personalSignature) {
-            this.mailData.text += this.personalSignatures[user].text
-            this.mailData.html += this.personalSignatures[user].html
+            try {
+                this.mailData.text += this.personalSignatures[mailData.user].text
+                this.mailData.html += this.personalSignatures[mailData.user].html
+            } catch {
+                this.mailData.text += this.personalSignatures['default'].text
+                this.mailData.html += this.personalSignatures['default'].html
+            }
         }
 
         let info = await this.transporter.sendMail(this.mailData)
