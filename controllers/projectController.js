@@ -85,7 +85,7 @@ exports.saveProject = async (req, res) => {
                 let mail = new mailService({
                     from: '"Infiltro" <planning@infiltro.be>',
                     to: '"David Lasseel" <david.lasseel@gmail.com>',
-                    subject: `Nieuw project aangemaakt: ${project.projectName}`,
+                    subject: `Nieuw project: ${req.user.name} ${project.status} '${project.projectName}'`,
                     text: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
                     html: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: <a href="${process.env.BASE_URL}/project/${project._id}">${process.env.BASE_URL}/project/${project._id}</a>`
                 })
@@ -95,7 +95,7 @@ exports.saveProject = async (req, res) => {
                 let mail = new mailService({
                     from: '"Infiltro" <planning@infiltro.be>',
                     to: '"David Lasseel" <david.lasseel@gmail.com>',
-                    subject: `Projectstatus gewijzigd: ${project.projectName}`,
+                    subject: `Projectstatuswijziging: ${req.user.name} ${project.status} '${project.projectName}'`,
                     text: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
                     html: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${savedProject._id}">${process.env.BASE_URL}/project/${savedProject._id}</a>`
                 })
