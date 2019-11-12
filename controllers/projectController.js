@@ -214,7 +214,7 @@ exports.sendProjectMail = async (req, res) => {
             text: mailForm.body,
             html: htmlMailBody,
             personalSignature: true,
-            user: req.user.name.toLowerCase()
+            user: req.user.id
         })
         await mail.send()
 

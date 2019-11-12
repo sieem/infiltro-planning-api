@@ -2,10 +2,12 @@ const nodemailer = require("nodemailer");
     
 module.exports = class Mail {
     constructor(mailData) {
+        console.log(mailData)
         this.mailData = mailData
         
         this.personalSignatures = {
-            david: {
+            // david
+            '5d4c733e65469039e2dd5acf': {
                 text: "\nDavid Lasseel\nM: +32 (0) 498 92 49 42\nwww.infiltro.be",
                 html: `
                     <p>David Lasseel<br>
@@ -15,7 +17,8 @@ module.exports = class Mail {
                     </p>
                 `
             },
-            roel: {
+            //roel
+            "5d67e636aee67725f41258ee": {
                 text: "\nRoel Berghman\nM: +32 (0) 474 950 713\nwww.infiltro.be",
                 html: `
                     <p>Roel Berghman<br>
