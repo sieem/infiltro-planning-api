@@ -79,8 +79,8 @@ module.exports = class Mail {
         
         if (this.mailData.personalSignature) {
             try {
-                this.mailData.text += this.personalSignatures[mailData.user].text
-                this.mailData.html += this.personalSignatures[mailData.user].html
+                this.mailData.text += this.personalSignatures[this.mailData.user].text
+                this.mailData.html += this.personalSignatures[this.mailData.user].html
             } catch {
                 this.mailData.text += this.personalSignatures['default'].text
                 this.mailData.html += this.personalSignatures['default'].html
