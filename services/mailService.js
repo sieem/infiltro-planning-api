@@ -5,8 +5,7 @@ module.exports = class Mail {
         this.mailData = mailData
         
         this.personalSignatures = {
-            // david
-            '5d4c733e65469039e2dd5acf': {
+            david: {
                 text: "\nDavid Lasseel\nM: +32 (0) 498 92 49 42\nwww.infiltro.be",
                 html: `
                     <p>David Lasseel<br>
@@ -16,8 +15,7 @@ module.exports = class Mail {
                     </p>
                 `
             },
-            //roel
-            "5d67e636aee67725f41258ee": {
+            roel: {
                 text: "\nRoel Berghman\nM: +32 (0) 474 950 713\nwww.infiltro.be",
                 html: `
                     <p>Roel Berghman<br>
