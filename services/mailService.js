@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
     
 module.exports = class Mail {
     constructor(mailData) {
-        console.log(mailData)
         this.mailData = mailData
         
         this.personalSignatures = {
