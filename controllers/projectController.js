@@ -205,10 +205,33 @@ exports.sendProjectMail = async (req, res) => {
         const htmlMailBody = mailForm.body.replace(/\n/g, "<br>")
         const foundProject = await Project.findById(mailForm._id).exec()
 
+        const mailDetails = {
+            david: {
+                name: "David Lasseel",
+                email: "david@infiltro.be"
+            },
+            roel: {
+                name: "Roel Berghman",
+                email: "roel@infiltro.be"
+            },
+            default: {
+                name: "Infiltro",
+                email: "info@infiltro.be"
+            }
+        }
+
+        let replyTo = '';
+
+        try {
+            replyTo = `"${mailDetails[foundProject.executor].name}" <${mailDetails[foundProject.executor].email}>`
+        } catch (error) {
+            replyTo = `"${mailDetails['default'].name}" <${mailDetails['default'].email}>`
+        }
+
         //send mail
         const mail = new mailService({
             from: '"Infiltro" <planning@infiltro.be>',
-            replyTo: `"${req.user.name}" <${req.user.email}>`,
+            replyTo,
             bcc: 'info@infiltro.be',
             to: mailForm.to,
             subject: mailForm.subject,
