@@ -203,6 +203,7 @@ exports.sendProjectMail = async (req, res) => {
     if (req.user.role === 'admin') {
         const mailForm = req.body
         const htmlMailBody = mailForm.body.replace(/\n/g, "<br>")
+        const foundProject = await Project.findById(mailForm._id).exec()
 
         //send mail
         const mail = new mailService({
@@ -214,7 +215,7 @@ exports.sendProjectMail = async (req, res) => {
             text: mailForm.body,
             html: htmlMailBody,
             personalSignature: true,
-            user: project.executor
+            user: foundProject.executor
         })
         await mail.send()
 
