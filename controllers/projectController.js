@@ -155,28 +155,23 @@ exports.removeProject = async (req, res) => {
 }
 
 exports.duplicateProject = async (req, res) => {
-    if (req.user.role === 'admin') {
-        try {
-            const foundProject = await Project.findById(req.body.projectId).exec()
-            foundProject._id = mongoose.Types.ObjectId()
-            foundProject.projectName = foundProject.projectName + ' (kopie)'
-            foundProject.eventId = ''
-            foundProject.calendarId = ''
-            foundProject.calendarLink = ''
-            foundProject.status = 'toPlan'
-            foundProject.datePlanned = ''
-            foundProject.hourPlanned = ''
+    try {
+        const foundProject = await Project.findById(req.body.projectId).exec()
+        foundProject._id = mongoose.Types.ObjectId()
+        foundProject.projectName = foundProject.projectName + ' (kopie)'
+        foundProject.eventId = ''
+        foundProject.calendarId = ''
+        foundProject.calendarLink = ''
+        foundProject.status = 'toPlan'
+        foundProject.datePlanned = ''
+        foundProject.hourPlanned = ''
 
-            await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
-            res.json({ projectId: foundProject._id})
+        await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
+        res.json({ projectId: foundProject._id})
 
-        } catch (error) {
-            console.log(error)
-            return res.status(400).send(error)
-        }
-        
-    } else {
-        return res.status(401).send('Unauthorized request')
+    } catch (error) {
+        console.log(error)
+        return res.status(400).send(error)
     }
 }
 
