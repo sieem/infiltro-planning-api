@@ -63,7 +63,7 @@ exports.saveProject = async (req, res) => {
 
                     try {
                         const { eventId, calendarId, calendarLink } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
-                        project.datePlanned = moment(excistingCalendarEvent.data.start.dateTime).format("yyyy-MM-dd")
+                        project.datePlanned = moment(excistingCalendarEvent.data.start.dateTime).format("YYYY-MM-DD")
                         project.hourPlanned = moment(excistingCalendarEvent.data.start.dateTime).format("HH:mm")
                         project.eventId = eventId
                         project.calendarId = calendarId
