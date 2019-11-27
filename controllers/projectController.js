@@ -5,6 +5,7 @@ const axios = require('axios')
 const moment = require('moment')
 const mailService = require('../services/mailService')
 const calendarService = require('../services/calendarService')
+const projectService = require('../services/projectService')
 const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
@@ -38,7 +39,7 @@ exports.saveProject = async (req, res) => {
                 const startDateTime = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
                 const companyQuery = await Company.findById(project.company).exec()
                 const event = {
-                    summary: `${companyQuery.name} ${project.projectName}`,
+                    summary: `${companyQuery.name}: ${project.projectName} / ${projectService.projectTypeName(project.projectType) } / ${project.houseAmount}`,
                     location: `${project.street} ${project.postalCode} ${project.city}`,
                     description: `Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${project.ATest || 'onbekend'} m²\nv50-waarde: ${project.v50Value || 'onbekend'}m³/h.m²\nBeschermd volume: ${project.protectedVolume || 'onbekend'}m³\nEPB nr: ${project.EpbNumber || 'onbekend'}\nOpmerkingen: ${project.comments}`,
                     start: {
