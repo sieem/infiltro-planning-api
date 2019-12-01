@@ -16,6 +16,9 @@ exports.saveProject = async (req, res) => {
     if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
         let project = new Project(req.body)
 
+        // combine date and hour to have a better sorting
+        project.datePlanned = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
+
         // check if address changed or lat or lng is not filled in yet
         try {
             const foundProject = await Project.findById(project._id).exec()
@@ -36,18 +39,17 @@ exports.saveProject = async (req, res) => {
             }
 
             if (project.datePlanned && project.hourPlanned && project.status == 'planned' && project.executor) {
-                const startDateTime = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
                 const companyQuery = await Company.findById(project.company).exec()
                 const event = {
                     summary: `${companyQuery.name}: ${project.projectName} / ${projectService.projectTypeName(project.projectType) } / ${project.houseAmount}`,
                     location: `${project.street} ${project.postalCode} ${project.city}`,
                     description: `Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${project.ATest || 'onbekend'} m²\nv50-waarde: ${project.v50Value || 'onbekend'}m³/h.m²\nBeschermd volume: ${project.protectedVolume || 'onbekend'}m³\nEPB nr: ${project.EpbNumber || 'onbekend'}\nOpmerkingen: ${project.comments}`,
                     start: {
-                        dateTime: startDateTime,
+                        dateTime: project.datePlanned,
                         timeZone: 'Europe/Brussels',
                     },
                     end: {
-                        dateTime: calendar.addHours(startDateTime, '1:30'),
+                        dateTime: calendar.addHours(project.datePlanned, '1:30'),
                         timeZone: 'Europe/Brussels',
                     }
                 }
