@@ -126,6 +126,9 @@ module.exports = class Calendar {
     
 
     combineDateHour(date, hour) {
+        if (!hour) {
+            return date
+        }
         const dateWithHours = new Date(date.setHours(hour.split(':')[0]))
         const dateWithHoursAndMinutes = new Date(dateWithHours.setMinutes(hour.split(':')[1]))
         return dateWithHoursAndMinutes
