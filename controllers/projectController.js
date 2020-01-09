@@ -234,6 +234,7 @@ exports.sendProjectMail = async (req, res) => {
             replyTo,
             bcc: 'info@infiltro.be',
             to: mailForm.to,
+            cc: mailForm.cc,
             subject: mailForm.subject,
             text: mailForm.body,
             html: htmlMailBody,
