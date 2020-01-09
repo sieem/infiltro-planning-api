@@ -246,6 +246,7 @@ exports.sendProjectMail = async (req, res) => {
         const mailObject = {
             sender: req.user._id,
             receiver: mailForm.to,
+            cc: mailForm.cc,
             dateSent: new Date(),
             body: mail.getHtml()
         }
