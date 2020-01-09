@@ -80,6 +80,8 @@ exports.saveProject = async (req, res) => {
             }
             
             // save the project
+            const oldProject = await Project.findById(project._id).exec()
+            project.mails = (oldProject) ? oldProject.mails : [];
             const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
             
             // check if I have to send mails
