@@ -7,6 +7,7 @@ const router = express.Router()
 const projectController = require('./controllers/projectController')
 const authController = require('./controllers/authController')
 const companiesController = require('./controllers/companiesController')
+const mailController = require('./controllers/mailController')
 
 const authMiddleware = require('./middleware/authMiddleware')
 
@@ -27,7 +28,7 @@ router.post('/save-project', upload.none(), authMiddleware.verifyToken, authMidd
 router.delete('/remove-project/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.removeProject)
 router.post('/duplicate-project/', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.duplicateProject)
 router.post('/batch-projects', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.batchProjects)
-router.post('/send-project-mail', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.sendProjectMail)
+router.post('/send-project-mail', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, mailController.sendProjectMail)
 
 router.get('/get-companies', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.getCompanies)
 router.post('/save-company', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.saveCompany)
