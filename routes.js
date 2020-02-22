@@ -8,6 +8,7 @@ const projectController = require('./controllers/projectController')
 const authController = require('./controllers/authController')
 const companiesController = require('./controllers/companiesController')
 const mailController = require('./controllers/mailController')
+const commentController = require('./controllers/commentController')
 
 const authMiddleware = require('./middleware/authMiddleware')
 
@@ -29,6 +30,10 @@ router.delete('/remove-project/:projectId', authMiddleware.verifyToken, authMidd
 router.post('/duplicate-project/', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.duplicateProject)
 router.post('/batch-projects', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, projectController.batchProjects)
 router.post('/send-project-mail', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, mailController.sendProjectMail)
+
+router.get('/get-comments/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.getComments)
+router.post('/save-comment/:projectId', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.saveComment)
+router.delete('/remove-comment/:projectId/:commentId', authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.removeComment)
 
 router.get('/get-companies', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.getCompanies)
 router.post('/save-company', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.saveCompany)
