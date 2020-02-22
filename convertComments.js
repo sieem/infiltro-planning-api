@@ -26,7 +26,7 @@
     console.log('start converting', new Date)
 
     for (const project of projects) {
-        if (typeof project.comments[0] === 'string') {
+        if (typeof project.comments[0] === 'string' && project.comments[0] !== "") {
             const commentObject = {
                 _id: mongoose.Types.ObjectId(),
                 user: "Onbekende gebruiker",
@@ -39,6 +39,15 @@
 
             new Project(project).save()
             console.log('modified', project._id)
+            continue
+        }
+
+        // hotfix for empty comments
+        if (typeof project.comments[0] === 'object' && project.comments[0].content == "") {
+            project.comments = []
+
+            new Project(project).save()
+            console.log('delete comments', project._id)
             continue
         }
     }
