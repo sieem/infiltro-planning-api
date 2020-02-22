@@ -58,7 +58,10 @@ exports.sendProjectMail = async (req, res) => {
         Project.updateOne({ _id: mailForm._id }, {
             $push: { mails: mailObject }
         }, function (err, affected, resp) {
-            if (err) console.log(err)
+            if (err) {
+                console.error(err)
+                return res.status(400).json(err.message)
+            }
             else res.json({})
         })
 

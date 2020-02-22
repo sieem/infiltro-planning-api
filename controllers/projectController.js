@@ -9,7 +9,7 @@ const projectService = require('../services/projectService')
 const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
-    res.status(200).send(mongoose.Types.ObjectId())
+    return res.status(200).send(mongoose.Types.ObjectId())
 }
 
 exports.saveProject = async (req, res) => {
@@ -108,7 +108,7 @@ exports.saveProject = async (req, res) => {
                 mail.send()
             }
 
-            res.status(200).json(project)
+            return res.status(200).json(project)
         } catch (error) {
             console.log(error)
         }   
@@ -123,9 +123,12 @@ exports.getProjects = (req, res) => {
         findParameters = {}
     }
     Project.find(findParameters, (err, projects) => {
-        if (err) console.log(err)
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
+        }
         else {
-            res.status(200).json(projects)
+            return res.status(200).json(projects)
         }
     })
     
@@ -133,8 +136,10 @@ exports.getProjects = (req, res) => {
 
 exports.getProject = (req, res) => {
     Project.findById(req.params.projectId, (err, project) => {
-        if (err) return res.status(400).send(err)
-
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
+        }
         if (!project) {
             return res.status(404).send('Project not found')
         }
@@ -155,7 +160,7 @@ exports.removeProject = async (req, res) => {
         Project.updateOne({ _id: req.params.projectId }, {
             status: "deleted"
         }, function (err, affected, resp) {            
-            res.json(resp)
+            return res.json(resp)
         })
     } else {
         return res.status(401).send('Unauthorized request')
@@ -175,10 +180,10 @@ exports.duplicateProject = async (req, res) => {
         foundProject.hourPlanned = ''
 
         await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
-        res.json({ projectId: foundProject._id})
+        return res.json({ projectId: foundProject._id})
 
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return res.status(400).send(error)
     }
 }
@@ -192,10 +197,13 @@ exports.batchProjects = async (req, res) => {
             await Project.updateOne({ _id: projectToChange._id }, {
                 status: statusToChange
             }, function (err, affected, resp) {
-                if (err) console.log(err)
+                if (err) {
+                    console.error(err)
+                    return res.status(400).json(err.message)
+                }
             })
         }
-        res.json({})
+        return res.json({})
     } else {
         return res.status(401).send('Unauthorized request')
     }

@@ -3,11 +3,13 @@ const Project = require('../models/project')
 
 exports.getComments = (req, res) => {
     Project.findById(req.params.projectId, (err, project) => {
-        if (err) console.log(err)
-        else {
-            if (project) return res.status(200).json(project.comments)
-            return res.status(200).send([])
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
         }
+
+        if (project) return res.status(200).json(project.comments)
+        return res.status(200).send([])
     })
 }
 
@@ -53,7 +55,7 @@ exports.saveComment = async (req, res) => {
 
         project.comments = updateElementInArray(project.comments, commentObject)
         await Project.findByIdAndUpdate(req.params.projectId, project, { upsert: true }).exec()
-        res.status(200).json(project.comments)
+        return res.status(200).json(project.comments)
     }
 }
 
@@ -63,12 +65,13 @@ exports.removeComment = (req, res) => {
     }
 
     Project.findById(req.params.projectId, async (err, project) => {
-        if (err) console.log(err)
-        else {
-            project.comments = removeElementInArray(project.comments, req.params.commentId)
-            await Project.findByIdAndUpdate(req.params.projectId, project, { upsert: true }).exec()
-            res.status(200).json(project.comments)
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
         }
+        project.comments = removeElementInArray(project.comments, req.params.commentId)
+        await Project.findByIdAndUpdate(req.params.projectId, project, { upsert: true }).exec()
+        return res.status(200).json(project.comments)
     })
 }
 
