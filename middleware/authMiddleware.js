@@ -21,15 +21,16 @@ exports.verifyToken = (req, res, next) => {
 
 exports.getUserDetails = (req, res, next) => {
     User.findById(req.userId, (err, user) => {
-        if (err) console.log(err)
-        else {
-            if (!user)
-                res.status(401).send('User not found')
-            else {
-                user.password = ""
-                req.user = user
-                next()
-            }
+        if (err) {
+            return res.status(400).json(err.message)
         }
+
+        if (!user) {
+            return res.status(401).send('User not found')
+        }
+
+        user.password = ""
+        req.user = user
+        next()
     })
 }
