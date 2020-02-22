@@ -37,7 +37,7 @@ exports.saveComment = async (req, res) => {
             console.log(error)
         }
     } else {
-        if (req.user.role !== 'admin') {
+        if (req.user.role !== 'admin' && req.user.id !== commentForm.user) {
             return res.status(401).send('Unauthorized request')
         }
 
