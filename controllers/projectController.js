@@ -133,14 +133,16 @@ exports.getProjects = (req, res) => {
 
 exports.getProject = (req, res) => {
     Project.findById(req.params.projectId, (err, project) => {
-        if (err) console.log(err)
-        else {
-            if (project.company === req.user.company || req.user.role === 'admin') {
-                res.status(200).json(project)
-            } else {
-                return res.status(401).send('Unauthorized request')
-            }
+        if (err) return res.status(400).send(err)
+
+        if (!project) {
+            return res.status(404).send('Project not found')
         }
+        if (project.company === req.user.company || req.user.role === 'admin') {
+            return res.status(200).json(project)
+        }
+
+        return res.status(401).send('Unauthorized request')
     })
 }
 
