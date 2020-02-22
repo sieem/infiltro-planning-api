@@ -29,7 +29,7 @@
         if (typeof project.comments[0] === 'string') {
             const commentObject = {
                 _id: mongoose.Types.ObjectId(),
-                user: "5d4c733e65469039e2dd5acf",
+                user: "Onbekende gebruiker",
                 createdDateTime: new Date,
                 modifiedDateTime: new Date,
                 content: project.comments[0],
