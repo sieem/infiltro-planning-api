@@ -6,17 +6,16 @@ const authService = require('../services/authService')
 const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
-exports.getUsers = (req, res) => {
-    const findParameters = (req.user.role === 'admin') ? {} : { company: req.user.company }
+exports.getUsers = async (req, res) => {
+    const selectParameters = (req.user.role === 'admin') ? { password: 0, resetToken: 0 } : { _id: 1, name: 1 }
 
-    User.find(findParameters, (err, users) => {
-        if (err) {
-            console.error(err)
-            return res.status(400).json(err.message)
-        }
-
+    try {
+        const users = await User.find({}).select(selectParameters).exec()
         return res.status(200).json(users)
-    })
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json(error.message)
+    }
 }
 
 //unused for now
