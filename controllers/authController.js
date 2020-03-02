@@ -7,7 +7,7 @@ const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
 exports.getUsers = async (req, res) => {
-    const selectParameters = (req.user.role === 'admin') ? { password: 0, resetToken: 0 } : { _id: 1, name: 1 }
+    const selectParameters = (req.user.role === 'admin') ? { password: 0, resetToken: 0 } : { _id: 1, name: 1, company: 1 }
 
     try {
         const users = await User.find({}).select(selectParameters).exec()
