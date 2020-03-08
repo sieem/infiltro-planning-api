@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server",
     "dev": "nodemon server",
+    "deploy": "node deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -35,6 +36,7 @@
     "nodemailer": "^6.2.1"
   },
   "devDependencies": {
+    "node-ssh": "^7.0.1",
     "nodemon": "^1.19.1"
   }
 }
