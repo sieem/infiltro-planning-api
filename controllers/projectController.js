@@ -51,6 +51,7 @@ exports.saveProject = async (req, res) => {
                     v50-waarde: ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²\n
                     Beschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\n
                     EPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\n
+                    Contactpersoon: ${!!project.EpbReporter ? project.EpbReporter : 'onbekend'}\n
                     Opmerkingen: ${project.comments}`,
                     start: {
                         dateTime: project.datePlanned,
