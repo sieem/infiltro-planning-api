@@ -6,6 +6,7 @@ const moment = require('moment')
 const mailService = require('../services/mailService')
 const calendarService = require('../services/calendarService')
 const projectService = require('../services/projectService')
+const commonService = require('../services/commonService')
 const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
@@ -35,8 +36,12 @@ exports.saveProject = async (req, res) => {
                     project.lat = data.results[0].geometry.location.lat
                     project.lng = data.results[0].geometry.location.lng
                 }
-                    
             }
+                    
+            // add comments and emails to project object
+            const oldProject = await Project.findById(project._id).exec()
+            project.mails = (oldProject) ? oldProject.mails : [];
+            project.comments = (oldProject) ? oldProject.comments : [];
 
             if (project.datePlanned && project.hourPlanned && project.status == 'planned' && project.executor) {
                 const companyQuery = await Company.findById(project.company).exec()
@@ -52,7 +57,7 @@ exports.saveProject = async (req, res) => {
                     Beschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\n
                     EPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\n
                     Contactpersoon: ${!!project.EpbReporter ? project.EpbReporter : 'onbekend'}\n
-                    Opmerkingen: ${project.comments}`,
+                    Opmerkingen: \n ${await commonService.commentsToString(project.comments)}`,
                     start: {
                         dateTime: project.datePlanned,
                         timeZone: 'Europe/Brussels',
@@ -89,9 +94,6 @@ exports.saveProject = async (req, res) => {
             }
             
             // save the project
-            const oldProject = await Project.findById(project._id).exec()
-            project.mails = (oldProject) ? oldProject.mails : [];
-            project.comments = (oldProject) ? oldProject.comments : [];
             const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
             
             // check if I have to send mails
