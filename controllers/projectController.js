@@ -1,12 +1,7 @@
 const mongoose = require('mongoose')
 const Project = require('../models/project')
-const Company = require('../models/company')
-const axios = require('axios')
-const moment = require('moment')
-const mailService = require('../services/mailService')
 const calendarService = require('../services/calendarService')
 const projectService = require('../services/projectService')
-const commonService = require('../services/commonService')
 const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
@@ -20,99 +15,21 @@ exports.saveProject = async (req, res) => {
         // combine date and hour to have a better sorting
         project.datePlanned = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
 
-        // check if address changed or lat or lng is not filled in yet
         try {
-            const foundProject = await Project.findById(project._id).exec()
+            const foundProject = await Project.findById(project._id).exec();
 
-            if (!foundProject || (foundProject && (project.street !== foundProject.street || project.city !== foundProject.city || project.postalCode !== foundProject.postalCode || !foundProject.lng || !foundProject.lat))) {
-                const {data} = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-                    params: {
-                        key: process.env.GMAPSAPIKEY,
-                        address: `${project.street.replace(/ /, "+")}+${project.postalCode}+${project.city}`
-                    }
-                })
+            project = await projectService.getCoordinates(project);
+            project = await projectService.addCommentsAndEmails(project, foundProject);
+            project = await projectService.saveCalendarItem(project, foundProject);
 
-                if (data.status == "OK") {
-                    project.lat = data.results[0].geometry.location.lat
-                    project.lng = data.results[0].geometry.location.lng
-                }
-            }
-                    
-            // add comments and emails to project object
-            const oldProject = await Project.findById(project._id).exec()
-            project.mails = (oldProject) ? oldProject.mails : [];
-            project.comments = (oldProject) ? oldProject.comments : [];
-
-            if (project.datePlanned && project.hourPlanned && project.status == 'planned' && project.executor) {
-                const companyQuery = await Company.findById(project.company).exec()
-                const event = {
-                    summary: `${companyQuery.name}: ${project.projectName} / ${projectService.projectTypeName(project.projectType) } / ${project.houseAmount}`,
-                    location: `${project.street} ${project.postalCode} ${project.city}`,
-                    description: `Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${!!project.ATest ? project.ATest : 'onbekend'} m²\nv50-waarde: ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²\nBeschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\nEPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\nContactpersoon: ${!!project.EpbReporter ? await commonService.userIdToName(project.EpbReporter) : 'onbekend'}\nOpmerkingen: \n ${await commonService.commentsToString(project.comments)}`,
-                    start: {
-                        dateTime: project.datePlanned,
-                        timeZone: 'Europe/Brussels',
-                    },
-                    end: {
-                        dateTime: calendar.addHours(project.datePlanned, '1:30'),
-                        timeZone: 'Europe/Brussels',
-                    }
-                }
-                if (!foundProject || (!foundProject.eventId && !foundProject.calendarId)) {
-
-                    const { eventId, calendarId, calendarLink } = await calendar.addEvent(project.executor, event)
-                    project.eventId = eventId
-                    project.calendarId = calendarId
-                    project.calendarLink = calendarLink
-                } else {
-                    const excistingCalendarEvent = await calendar.findEvent(foundProject.calendarId, foundProject.eventId)
-                    event.start.dateTime = excistingCalendarEvent.data.start.dateTime
-                    event.end.dateTime = excistingCalendarEvent.data.end.dateTime
-
-                    try {
-                        const { eventId, calendarId, calendarLink } = await calendar.updateEvent(foundProject.calendarId, foundProject.eventId, project.executor, event);
-                        project.datePlanned = moment(excistingCalendarEvent.data.start.dateTime).format("YYYY-MM-DD")
-                        project.hourPlanned = moment(excistingCalendarEvent.data.start.dateTime).format("HH:mm")
-                        project.eventId = eventId
-                        project.calendarId = calendarId
-                        project.calendarLink = calendarLink
-                    } catch (error) {
-                        project.eventId = ''
-                        project.calendarId = ''
-                        project.calendarLink = ''
-                    }
-                }
-            }
-            
             // save the project
-            const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec()
-            
-            // check if I have to send mails
-            const idDavid = '5d4c733e65469039e2dd5acf'
-            if (!savedProject && req.user.id !== idDavid) {
-                let mail = new mailService({
-                    from: '"Infiltro" <planning@infiltro.be>',
-                    to: '"David Lasseel" <david.lasseel@gmail.com>',
-                    subject: `Nieuw project: ${req.user.name} ${project.status} '${project.projectName}'`,
-                    text: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: ${process.env.BASE_URL}/project/${project._id}`,
-                    html: `Project '${project.projectName}' is toegevoegd door ${req.user.name} met status ${project.status}. Projecturl: <a href="${process.env.BASE_URL}/project/${project._id}">${process.env.BASE_URL}/project/${project._id}</a>`
-                })
-                mail.send()
-            }
-            if (savedProject && project.status !== savedProject.status && req.user.id !== idDavid) {
-                let mail = new mailService({
-                    from: '"Infiltro" <planning@infiltro.be>',
-                    to: '"David Lasseel" <david.lasseel@gmail.com>',
-                    subject: `Projectstatuswijziging: ${req.user.name} ${project.status} '${project.projectName}'`,
-                    text: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: ${process.env.BASE_URL}/project/${savedProject._id}`,
-                    html: `Status van project '${project.projectName}' is gewijzigd naar ${project.status} door ${req.user.name}. Projecturl: <a href="${process.env.BASE_URL}/project/${savedProject._id}">${process.env.BASE_URL}/project/${savedProject._id}</a>`
-                })
-                mail.send()
-            }
+            const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec();
 
-            return res.status(200).json(project)
+            projectService.sendMails(project, savedProject, req);
+            return res.status(200).json(project);
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            return res.status(500).send('Something went wrong');
         }   
     } else {
         return res.status(401).send('Unauthorized request')
