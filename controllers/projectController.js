@@ -49,15 +49,7 @@ exports.saveProject = async (req, res) => {
                     summary: `${companyQuery.name}: ${project.projectName} / ${projectService.projectTypeName(project.projectType) } / ${project.houseAmount}`,
                     location: `${project.street} ${project.postalCode} ${project.city}`,
                     description: `
-                    Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\n
-                    Contactgegevens: ${project.name} ${project.tel} ${project.email}\n
-                    ${project.extraInfoContact}\n
-                    A-Test: ${!!project.ATest ? project.ATest : 'onbekend'} m²\n
-                    v50-waarde: ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²\n
-                    Beschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\n
-                    EPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\n
-                    Contactpersoon: ${!!project.EpbReporter ? await commonService.userIdToName(project.EpbReporter) : 'onbekend'}\n
-                    Opmerkingen: \n ${await commonService.commentsToString(project.comments)}`,
+                    Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${!!project.ATest ? project.ATest : 'onbekend'} m²\nv50-waarde: ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²\nBeschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\nEPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\nContactpersoon: ${!!project.EpbReporter ? await commonService.userIdToName(project.EpbReporter) : 'onbekend'}\nOpmerkingen: \n ${await commonService.commentsToString(project.comments)}`,
                     start: {
                         dateTime: project.datePlanned,
                         timeZone: 'Europe/Brussels',
