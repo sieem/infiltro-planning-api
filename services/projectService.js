@@ -139,6 +139,15 @@ exports.saveCalendarItem = async (project, foundProject) => {
         }
     }
 
+
+    // delete calendarItem
+    if (foundProject && project.status !== 'planned' && foundProject.eventId && foundProject.calendarId) {
+        calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
+        project.eventId = ''
+        project.calendarId = ''
+        project.calendarLink = ''
+    }
+
     return project;
 }
 
