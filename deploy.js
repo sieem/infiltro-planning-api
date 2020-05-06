@@ -24,7 +24,7 @@
         }
 
         if (process.argv.indexOf('frontend') === -1 && process.argv.indexOf('backend') === -1 && process.argv.indexOf('f') === -1 && process.argv.indexOf('b') === -1) {
-            console.log('deploying and backend')
+            console.log('deploying frontend and backend')
             await frontenDeploy()
             await backendDeploy()
         }
