@@ -14,14 +14,17 @@
 
 
         if (process.argv.indexOf('frontend') !== -1 || process.argv.indexOf('f') !== -1) {
+            console.log('deploying frontend')
             await frontenDeploy()
         }
 
         if (process.argv.indexOf('backend') !== -1 || process.argv.indexOf('b') !== -1) {
+            console.log('deploying backend')
             await backendDeploy()
         }
 
         if (process.argv.indexOf('frontend') === -1 && process.argv.indexOf('backend') === -1 && process.argv.indexOf('f') === -1 && process.argv.indexOf('b') === -1) {
+            console.log('deploying and backend')
             await frontenDeploy()
             await backendDeploy()
         }
