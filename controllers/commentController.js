@@ -65,6 +65,9 @@ exports.removeComment = (req, res) => {
             console.error(err)
             return res.status(400).json(err.message)
         }
+        if (req.user.role !== 'admin' && getComment(project.comments, req.params.commentId).user !== req.user.id) {
+            return res.status(401).send('Unauthorized request');
+        }
         project.comments = removeElementInArray(project.comments, req.params.commentId)
         await Project.findByIdAndUpdate(req.params.projectId, project, { upsert: true }).exec()
         return res.status(200).json(project.comments)
@@ -83,4 +86,8 @@ function updateElementInArray(array, element) {
         }
     }
     return array
+}
+
+function getComment(array, id) {
+    return array.filter(el => el._id == id)[0]
 }
