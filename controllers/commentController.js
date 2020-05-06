@@ -60,10 +60,6 @@ exports.saveComment = async (req, res) => {
 }
 
 exports.removeComment = (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(401).send('Unauthorized request')
-    }
-
     Project.findById(req.params.projectId, async (err, project) => {
         if (err) {
             console.error(err)
