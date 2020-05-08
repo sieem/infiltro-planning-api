@@ -96,7 +96,7 @@ exports.addCommentsAndEmails = async (project) => {
 }
 
 exports.saveCalendarItem = async (project, foundProject) => {
-    if (project.datePlanned && project.hourPlanned && project.status == 'planned' && project.executor) {
+    if (project.datePlanned && project.hourPlanned && ['proposalSent', 'planned'].indexOf(project.status) > -1 && project.executor) {
         const companyQuery = await Company.findById(project.company).exec()
         const event = {
             summary: `${companyQuery.name}: ${project.projectName} / ${this.projectTypeName(project.projectType)} / ${project.houseAmount}`,
@@ -141,7 +141,7 @@ exports.saveCalendarItem = async (project, foundProject) => {
 
 
     // delete calendarItem
-    if (foundProject && project.status !== 'planned' && foundProject.eventId && foundProject.calendarId) {
+    if (foundProject && ['proposalSent', 'planned', 'executed', 'reportAvailable', 'conformityAvailable', 'completed'].indexOf(project.status) === -1 && foundProject.eventId && foundProject.calendarId) {
         calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
         project.eventId = ''
         project.calendarId = ''
