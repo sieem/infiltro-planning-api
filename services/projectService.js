@@ -86,7 +86,7 @@ exports.getCoordinates = async (project, foundProject) => {
 
     return project;
 }
-exports.addCommentsAndEmails = async (project, oldProject) => {
+exports.addCommentsAndEmails = (project, oldProject) => {
     // add comments and emails to project object
     project.mails = (oldProject) ? oldProject.mails : [];
     project.comments = (oldProject) ? oldProject.comments : [];
