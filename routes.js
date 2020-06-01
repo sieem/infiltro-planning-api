@@ -9,6 +9,7 @@ const authController = require('./controllers/authController')
 const companiesController = require('./controllers/companiesController')
 const mailController = require('./controllers/mailController')
 const commentController = require('./controllers/commentController')
+const archiveController = require('./controllers/archiveController')
 
 const authMiddleware = require('./middleware/authMiddleware')
 
@@ -34,6 +35,8 @@ router.post('/send-project-mail', upload.none(), authMiddleware.verifyToken, aut
 router.get('/get-comments/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.getComments)
 router.post('/save-comment/:projectId', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.saveComment)
 router.delete('/remove-comment/:projectId/:commentId', authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.removeComment)
+
+router.get('/get-archive/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, archiveController.getProjectArchive)
 
 router.get('/get-companies', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.getCompanies)
 router.post('/save-company', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.saveCompany)
