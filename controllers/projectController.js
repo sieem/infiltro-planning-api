@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Project = require('../models/project')
 const calendarService = require('../services/calendarService')
 const projectService = require('../services/projectService')
+const archiveService = require('../services/archiveService')
 const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
@@ -21,6 +22,8 @@ exports.saveProject = async (req, res) => {
             project = await projectService.getCoordinates(project);
             project = projectService.addCommentsAndEmails(project, oldProject);
             project = await projectService.saveCalendarItem(project, oldProject);
+
+            archiveService.saveProjectArchive(project, req.userId);
 
             // save the project
             const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec();
