@@ -37,6 +37,7 @@ router.post('/save-comment/:projectId', upload.none(), authMiddleware.verifyToke
 router.delete('/remove-comment/:projectId/:commentId', authMiddleware.verifyToken, authMiddleware.getUserDetails, commentController.removeComment)
 
 router.get('/get-archive/:projectId', authMiddleware.verifyToken, authMiddleware.getUserDetails, archiveController.getProjectArchive)
+router.get('/get-archived-project/:archiveId', authMiddleware.verifyToken, authMiddleware.getUserDetails, archiveController.getArchivedProject)
 
 router.get('/get-companies', authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.getCompanies)
 router.post('/save-company', upload.none(), authMiddleware.verifyToken, authMiddleware.getUserDetails, companiesController.saveCompany)
