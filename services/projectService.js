@@ -86,9 +86,8 @@ exports.getCoordinates = async (project, foundProject) => {
 
     return project;
 }
-exports.addCommentsAndEmails = async (project) => {
+exports.addCommentsAndEmails = async (project, oldProject) => {
     // add comments and emails to project object
-    const oldProject = await Project.findById(project._id).exec()
     project.mails = (oldProject) ? oldProject.mails : [];
     project.comments = (oldProject) ? oldProject.comments : [];
 

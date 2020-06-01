@@ -16,11 +16,11 @@ exports.saveProject = async (req, res) => {
         project.datePlanned = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
 
         try {
-            const foundProject = await Project.findById(project._id).exec();
+            const oldProject = await Project.findById(project._id).exec();
 
             project = await projectService.getCoordinates(project);
-            project = await projectService.addCommentsAndEmails(project, foundProject);
-            project = await projectService.saveCalendarItem(project, foundProject);
+            project = projectService.addCommentsAndEmails(project, oldProject);
+            project = await projectService.saveCalendarItem(project, oldProject);
 
             // save the project
             const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec();
