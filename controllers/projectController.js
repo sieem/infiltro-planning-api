@@ -116,14 +116,14 @@ exports.batchProjects = async (req, res) => {
         const projectsToChange = req.body.projects
 
         for (const projectToChange of projectsToChange) {
-            await Project.updateOne({ _id: projectToChange._id }, {
-                status: statusToChange
-            }, function (err, affected, resp) {
-                if (err) {
-                    console.error(err)
-                    return res.status(400).json(err.message)
-                }
-            })
+            try {
+                await Project.updateOne({ _id: projectToChange._id }, { status: statusToChange }).exec();
+                const projectToArchive = await Project.findById(projectToChange._id).exec();
+                archiveService.saveProjectArchive(projectToArchive, req.userId);
+            } catch (error) {
+                console.error(error)
+                return res.status(400).json(error.message)
+            }
         }
         return res.json({})
     } else {
