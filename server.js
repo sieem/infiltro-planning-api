@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const compression = require('compression')
 const path = require('path')
 const http = require('http')
 const https = require('https')
@@ -17,6 +18,7 @@ const staticRoot = '../infiltro-planning/dist/'
 app.use(express.json())
 app.use(cors())
 app.use(cookieParser())
+app.use(compression())
 
 mongoose.connect(db, { useNewUrlParser: true }, err => {
     if (err) console.log(err)
