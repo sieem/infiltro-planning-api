@@ -102,7 +102,7 @@ exports.duplicateProject = async (req, res) => {
         foundProject.hourPlanned = ''
 
         await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
-        archiveService.saveProjectArchive(project, req.userId);
+        archiveService.saveProjectArchive(foundProject, req.userId);
         return res.json({ projectId: foundProject._id})
 
     } catch (error) {
