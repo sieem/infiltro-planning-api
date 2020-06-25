@@ -65,6 +65,9 @@ exports.getProject = (req, res) => {
         if (!project) {
             return res.status(404).send('Project not found')
         }
+        if (project.status === 'deleted' && req.user.role !== 'admin') {
+            return res.status(401).send('Unauthorized request');
+        }
         if (project.company === req.user.company || req.user.role === 'admin') {
             return res.status(200).json(project)
         }
