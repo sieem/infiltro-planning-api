@@ -74,19 +74,15 @@ exports.getProject = (req, res) => {
 }
 
 exports.removeProject = async (req, res) => {
-    if (req.user.role === 'admin') {
-        const foundProject = await Project.findById(req.params.projectId).exec()
-        if (foundProject.calendarId && foundProject.eventId) {
-            calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
-        }
-        Project.updateOne({ _id: req.params.projectId }, {
-            status: "deleted"
-        }, function (err, affected, resp) {            
-            return res.json(resp)
-        })
-    } else {
-        return res.status(401).send('Unauthorized request')
+    const foundProject = await Project.findById(req.params.projectId).exec()
+    if (foundProject.calendarId && foundProject.eventId) {
+        calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
     }
+    Project.updateOne({ _id: req.params.projectId }, {
+        status: "deleted"
+    }, function (err, affected, resp) {
+        return res.json(resp)
+    })
 }
 
 exports.duplicateProject = async (req, res) => {
