@@ -11,10 +11,19 @@ exports.verifyToken = (req, res, next) => {
     if (token === 'null') {
         return res.status(401).send('Unauthorized request')
     }
-    let payload = jwt.verify(token, secretKey)
+
+    let payload = {};
+    try {
+        payload = jwt.verify(token, secretKey)
+        
+    } catch (error) {
+        return res.status(401).send('Invalid Signature');
+    }
+
     if (!payload) {
         return res.status(401).send('Unauthorized request')
     }
+
     req.userId = payload.id
     next()
 }
