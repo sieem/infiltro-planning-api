@@ -123,7 +123,28 @@ module.exports = class Calendar {
         })
     }
 
-    
+    synchroniseCalendar(calendarId, latestSyncToken, nextPageToken) {
+        if (!this.oAuth2Client) {
+            this.init();
+        }
+
+        let params = { calendarId };
+
+        if (latestSyncToken) {
+            params = { ...params, latestSyncToken }
+        }
+
+        if (nextPageToken) {
+            params = { ...params, pageToken: nextPageToken }
+        }
+        return new Promise((resolve, reject) => {
+            const calendar = google.calendar({ version: 'v3', auth: this.oAuth2Client });
+            calendar.events.list(params, (err, res) => {
+                if (err) reject('There was an error contacting the Calendar service: ' + err);
+                resolve(res);
+            });
+        })
+    }
 
     combineDateHour(date, hour) {
         if (!hour || !date) {
