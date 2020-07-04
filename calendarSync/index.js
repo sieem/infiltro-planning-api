@@ -31,7 +31,7 @@
         },
     ];
 
-    schedule.scheduleJob('0 0 * * *', async (fireDate) => {
+    schedule.scheduleJob('0 4 * * *', async (fireDate) => {
         console.log('Sync at', moment(fireDate).format("YYYY-MM-DD HH:mm"));
 
         const projects = await Project.find({}).select({ eventId: 1 }).exec();
