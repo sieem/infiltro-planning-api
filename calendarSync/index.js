@@ -76,9 +76,6 @@
             ).exec();
         }
 
-        if (newNextPageToken) {
-            nextSyncToken = await processCalendar(calendar, projectEventIds, latestSyncToken, newNextPageToken);
-        }
-        return nextSyncToken;
+        return (newNextPageToken) ? await processCalendar(calendar, projectEventIds, latestSyncToken, newNextPageToken) : nextSyncToken;
     }
 })()
