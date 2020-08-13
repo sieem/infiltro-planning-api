@@ -52,13 +52,13 @@
     });
 
     async function processCalendar(calendar, projectEventIds, latestSyncToken, nextPageToken) {
-        const { data: calendarResult } = await calendarService.synchroniseCalendar(calendar.id, latestSyncToken, nextPageToken);
-        const { items, nextPageToken: newNextPageToken, nextSyncToken } = calendarResult;
+        let { data: calendarResult } = await calendarService.synchroniseCalendar(calendar.id, latestSyncToken, nextPageToken);
+        let { items, nextPageToken: newNextPageToken, nextSyncToken } = calendarResult;
 
         console.log(calendar.name, items.length, latestSyncToken == nextSyncToken);
 
-        for (const item of items) {
-            const { id, start, end } = item;
+        for (let item of items) {
+            let { id, start, end } = item;
 
             if (!id || !start || !start.dateTime || !end || !end.dateTime) {
                 continue;
