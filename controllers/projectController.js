@@ -81,11 +81,10 @@ exports.removeProject = async (req, res) => {
     if (foundProject.calendarId && foundProject.eventId) {
         calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
     }
-    Project.updateOne({ _id: req.params.projectId }, {
-        status: "deleted"
-    }, function (err, affected, resp) {
-        return res.json(resp)
-    })
+    await Project.updateOne({ _id: req.params.projectId }, {status: 'deleted'}).exec();
+    const projectToArchive = await Project.findById(req.params.projectId).exec();
+    archiveService.saveProjectArchive(projectToArchive, req.userId);
+    return res.json({ status: 'success'})
 }
 
 exports.duplicateProject = async (req, res) => {
