@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const schema = {
     company: String,
     dateCreated: Date,
+    dateEdited: Date,
     projectType: String,
     houseAmount: String,
     projectName: String,

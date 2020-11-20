@@ -22,6 +22,7 @@ exports.saveProject = async (req, res) => {
             project = await projectService.getCoordinates(project);
             project = projectService.addCommentsAndEmails(project, oldProject);
             project = await projectService.saveCalendarItem(project, oldProject);
+            project.dateEdited = new Date();
 
             archiveService.saveProjectArchive(project, req.userId);
 
