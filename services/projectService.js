@@ -113,7 +113,7 @@ exports.saveCalendarItem = async (project, foundProject) => {
 
         // use a different color to differenciate visually
         if (project.status === "proposalSent") {
-            event.colorId = calendar.getColor(project.executor);
+            event.colorId = '2'; // https://lukeboyle.com/blog-posts/2016/04/google-calendar-api---color-id
         }
 
         if (!foundProject || (!foundProject.eventId && !foundProject.calendarId)) {
