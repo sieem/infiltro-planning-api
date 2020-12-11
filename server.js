@@ -12,7 +12,9 @@ const routes = require('./routes')
 
 const port = process.env.PORT || 3000
 const app = express()
-const db = `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@localhost:27017/${process.env.MONGODB_DB}`
+const db = process.env.NODE_ENV === 'development'
+    ? `mongodb://localhost/${process.env.MONGODB_DB}`
+    : `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@localhost:27017/${process.env.MONGODB_DB}`;
 const staticRoot = '../infiltro-planning/dist/'
 
 app.use(express.json())
