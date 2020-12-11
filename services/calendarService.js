@@ -146,6 +146,15 @@ module.exports = class Calendar {
         })
     }
 
+    getColor(executor) {
+        switch (executor) {
+            case 'david': return '4';
+            case 'roel': return '9';
+            case 'together': return '1';
+            default: return '1';
+        }
+    }
+
     combineDateHour(date, hour) {
         if (!hour || !date) {
             return date

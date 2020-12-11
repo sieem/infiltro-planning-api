@@ -111,6 +111,11 @@ exports.saveCalendarItem = async (project, foundProject) => {
             }
         }
 
+        // use a different color to differenciate visually
+        if (project.status === "proposalSent") {
+            event.colorId = calendar.getColor(project.executor);
+        }
+
         if (!foundProject || (!foundProject.eventId && !foundProject.calendarId)) {
             // add calendarItem
             const { eventId, calendarId, calendarLink } = await calendar.addEvent(project.executor, event)
