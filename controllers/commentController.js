@@ -39,7 +39,7 @@ exports.saveComment = async (req, res) => {
             console.log(error)
         }
     } else {
-        if (req.user.role !== 'admin' && req.user.id !== commentForm.user) {
+        if (req.user.role !== 'admin' && req.user._id != commentForm.user) {
             return res.status(401).send('Unauthorized request')
         }
 
@@ -65,7 +65,7 @@ exports.removeComment = (req, res) => {
             console.error(err)
             return res.status(400).json(err.message)
         }
-        if (req.user.role !== 'admin' && getComment(project.comments, req.params.commentId).user !== req.user.id) {
+        if (req.user.role !== 'admin' && getComment(project.comments, req.params.commentId).user != req.user._id) {
             return res.status(401).send('Unauthorized request');
         }
         project.comments = removeElementInArray(project.comments, req.params.commentId)
