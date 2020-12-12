@@ -1,42 +1,18 @@
 const mongoose = require('mongoose')
 const Project = require('../models/project')
-const calendarService = require('../services/calendarService')
 const projectService = require('../services/projectService')
-const archiveService = require('../services/archiveService')
-const calendar = new calendarService()
 
 exports.generateProjectId = (req,res) => {
     return res.status(200).send(mongoose.Types.ObjectId())
 }
 
 exports.saveProject = async (req, res) => {
-    if ((req.body.company === req.user.company && req.user.role === 'company') || req.user.role === 'admin') {
-        let project = new Project(req.body)
-
-        // combine date and hour to have a better sorting
-        project.datePlanned = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
-
-        try {
-            const oldProject = await Project.findById(project._id).exec();
-
-            project = await projectService.getCoordinates(project);
-            project = projectService.addCommentsAndEmails(project, oldProject);
-            project = await projectService.saveCalendarItem(project, oldProject);
-            project.dateEdited = new Date();
-
-            archiveService.saveProjectArchive(project, req.userId);
-
-            // save the project
-            const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec();
-
-            projectService.sendMails(project, savedProject, req);
-            return res.status(200).json(project);
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send('Something went wrong');
-        }   
-    } else {
-        return res.status(401).send('Unauthorized request')
+    try {
+        const project = await projectService.saveProject(req.body, req.user);
+        res.status(200).json(project);
+    }
+     catch (error) {
+        return res.status(error.status).send(error.message);
     }
 }
 
@@ -78,35 +54,41 @@ exports.getProject = (req, res) => {
 }
 
 exports.removeProject = async (req, res) => {
-    const foundProject = await Project.findById(req.params.projectId).exec()
-    if (foundProject.calendarId && foundProject.eventId) {
-        calendar.deleteEvent(foundProject.calendarId, foundProject.eventId)
+    const foundProject = await Project.findById(req.params.projectId).exec();
+    foundProject.status = 'deleted';
+    req.body = foundProject;
+
+    try {
+        await projectService.saveProject(req.body, req.user);
+        return res.json({ status: 'success' });
     }
-    await Project.updateOne({ _id: req.params.projectId }, {status: 'deleted'}).exec();
-    const projectToArchive = await Project.findById(req.params.projectId).exec();
-    archiveService.saveProjectArchive(projectToArchive, req.userId);
-    return res.json({ status: 'success'})
+    catch (error) {
+        return res.status(error.status).send(error.message);
+    }
 }
 
 exports.duplicateProject = async (req, res) => {
     try {
-        const foundProject = await Project.findById(req.body.projectId).exec()
-        foundProject._id = mongoose.Types.ObjectId()
-        foundProject.projectName = foundProject.projectName + ' (kopie)'
-        foundProject.eventId = ''
-        foundProject.calendarId = ''
-        foundProject.calendarLink = ''
-        foundProject.status = 'toPlan'
-        foundProject.datePlanned = ''
-        foundProject.hourPlanned = ''
+        const foundProject = await Project.findById(req.body.projectId).exec();
+        foundProject._id = mongoose.Types.ObjectId();
+        foundProject.projectName = foundProject.projectName + ' (kopie)';
+        foundProject.eventId = '';
+        foundProject.calendarId = '';
+        foundProject.calendarLink = '';
+        foundProject.status = 'toPlan';
+        foundProject.datePlanned = '';
+        foundProject.hourPlanned = '';
 
-        await Project.findByIdAndUpdate(foundProject._id, foundProject, { upsert: true }).exec()
-        archiveService.saveProjectArchive(foundProject, req.userId);
-        return res.json({ projectId: foundProject._id})
-
+        try {
+            await projectService.saveProject(foundProject, req.user);
+            return res.json({ projectId: foundProject._id })
+        }
+        catch (error) {
+            return res.status(error.status).send(error.message);
+        }
     } catch (error) {
         console.error(error)
-        return res.status(400).send(error)
+        return res.status(500).send(error)
     }
 }
 
@@ -117,15 +99,16 @@ exports.batchProjects = async (req, res) => {
 
         for (const projectToChange of projectsToChange) {
             try {
-                await Project.updateOne({ _id: projectToChange._id }, { status: statusToChange }).exec();
-                const projectToArchive = await Project.findById(projectToChange._id).exec();
-                archiveService.saveProjectArchive(projectToArchive, req.userId);
-            } catch (error) {
-                console.error(error)
-                return res.status(400).json(error.message)
+                const foundProject = await Project.findById(projectToChange._id).exec();
+                foundProject.status = statusToChange;
+                await projectService.saveProject(foundProject, req.user);
+                
+            }
+            catch (error) {
+                return res.status(error.status).send(error.message);
             }
         }
-        return res.json({})
+        return res.json({ status: 'success' });
     } else {
         return res.status(401).send('Unauthorized request')
     }
