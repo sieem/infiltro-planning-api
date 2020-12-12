@@ -37,7 +37,7 @@
 
     async function frontenDeploy() {
         // build angular
-        const stdout = await execSync('cd ../infiltro-planning && npm run build');
+        const stdout = await execSync(`cd ${__dirname}/../../infiltro-planning && npm run build`);
 
         console.log(`ng build: ${stdout}`);
 
