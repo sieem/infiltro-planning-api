@@ -62,13 +62,23 @@
 
     async function backendDeploy() {
         // Update backend
-        console.log('git pull:', await ssh.exec('git pull', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        try {
+            console.log('git pull:', await ssh.exec('git pull', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        }
+         catch (error) {
+            console.log(error);
+        }
         try {
             console.log('npm i:', await ssh.exec('npm i', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
         } catch (error) {
             console.error(error)
         }
-        console.log(await ssh.exec('pm2 restart server', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        try {
+            console.log(await ssh.exec('pm2 restart server', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        }
+         catch (error) {
+            console.log(error);
+        }
     }
 
     function delay(ms) {
