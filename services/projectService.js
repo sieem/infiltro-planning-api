@@ -159,7 +159,7 @@ exports.saveCalendarItem = async (project, foundProject) => {
 exports.sendMails = (project, savedProject, user) => {
     // check if I have to send mails
     const idDavid = '5d4c733e65469039e2dd5acf'
-    if (!savedProject && user._id !== idDavid) {
+    if (!savedProject && user.get('id') !== idDavid) {
         let mail = new mailService({
             from: '"Infiltro" <planning@infiltro.be>',
             to: '"David Lasseel" <david.lasseel@gmail.com>',
@@ -169,7 +169,7 @@ exports.sendMails = (project, savedProject, user) => {
         })
         mail.send()
     }
-    if (savedProject && project.status !== savedProject.status && user._id !== idDavid) {
+    if (savedProject && project.status !== savedProject.status && user.get('id') !== idDavid) {
         let mail = new mailService({
             from: '"Infiltro" <planning@infiltro.be>',
             to: '"David Lasseel" <david.lasseel@gmail.com>',
@@ -196,7 +196,7 @@ exports.saveProject = async (body, user) => {
             project = await this.saveCalendarItem(project, oldProject);
             project.dateEdited = new Date();
 
-            archiveService.saveProjectArchive(project, user._id);
+            archiveService.saveProjectArchive(project, user.get('id'));
 
             // save the project
             const savedProject = await Project.findByIdAndUpdate(project._id, project, { upsert: true }).exec();
