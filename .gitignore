@@ -4,3 +4,4 @@ dbInit.txt
 credentials*
 token*
 calendarSync/latestSyncTokens.json
+dist

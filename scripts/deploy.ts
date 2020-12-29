@@ -63,28 +63,26 @@ import NodeSSH from 'node-ssh';
     }
 
     async function backendDeploy() {
-        // Update backend
-        try {
-            console.log('git pull:', await ssh.exec('git pull', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
-        }
-         catch (error) {
-            console.log(error);
-        }
-        try {
-            console.log('npm i:', await ssh.exec('npm i', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
-        } catch (error) {
-            console.error(error)
-        }
-        try {
-            console.log(await ssh.exec('pm2 restart server', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
-        }
-         catch (error) {
-            console.log(error);
-        }
-    }
 
-    function delay(ms) {
-        console.log(`delaying operation with ${ms}ms`)
-        return new Promise(resolve => setTimeout(resolve, ms))
+        // build typescript
+        const stdout = await execSync(`npm run build`);
+
+        console.log(`ng build: ${stdout}`);
+
+        // delay(5000);
+        // return;
+
+        const failed = [];
+        const successful = [];
+
+        const status = await ssh.putDirectory('./dist', '/root/infiltro-planning-api', {
+            recursive: true,
+            concurrency: 10,
+            tick: (localPath, remotePath, error) => (error) ? failed.push(localPath) : successful.push(localPath)
+        })
+
+        console.log('the directory transfer was', status ? 'successful' : 'unsuccessful');
+        // console.log('successful transfers', successful);
+        console.log('failed transfers', failed);
     }
 })();
