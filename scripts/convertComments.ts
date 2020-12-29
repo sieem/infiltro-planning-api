@@ -1,12 +1,15 @@
+import { config } from 'dotenv';
+import { connect, Types } from 'mongoose';
+import Project from '../models/project';
+
 (async () => {
-    require('dotenv').config()
-    const mongoose = require('mongoose')
-    const Project = require('./models/project')
+    config();
+
     let projects
 
     const db = `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@localhost:27017/${process.env.MONGODB_DB}`
 
-    mongoose.connect(db, { useNewUrlParser: true }, err => {
+    connect(db, { useNewUrlParser: true }, err => {
         if (err) {
             console.log(err)
             return
@@ -28,7 +31,7 @@
     for (const project of projects) {
         if (typeof project.comments[0] === 'string' && project.comments[0] !== "") {
             const commentObject = {
-                _id: mongoose.Types.ObjectId(),
+                _id: Types.ObjectId(),
                 user: "Onbekende gebruiker",
                 createdDateTime: new Date,
                 modifiedDateTime: new Date,

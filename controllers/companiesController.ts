@@ -1,6 +1,6 @@
-const Company = require('../models/company')
+import Company from '../models/company';
 
-exports.getCompanies = (req, res) => {
+export const getCompanies = (req, res) => {
     let findParameters = (req.user.role === 'admin')? {}: { _id: req.user.company }
 
     Company.find(findParameters, (err, companies) => {
@@ -12,7 +12,7 @@ exports.getCompanies = (req, res) => {
     })
 }
 
-exports.saveCompany = (req, res) => {
+export const saveCompany = (req, res) => {
     if (req.user.role === 'admin') {
         let company = new Company(req.body)
         Company.findByIdAndUpdate(company._id, company, { upsert: true }, function (err, savedCompany) {
@@ -27,15 +27,15 @@ exports.saveCompany = (req, res) => {
     }
 }
 
-exports.removeCompany = (req, res) => {
+export const removeCompany = (req, res) => {
     if (req.user.role === 'admin') {
-        Company.deleteOne({ _id: req.params.companyId }, (err, company) => {
+        Company.deleteOne({ _id: req.params.companyId }, (err) => {
             if (err) {
                 console.error(err)
                 return res.status(400).json(err.message)
             }
 
-            return res.json(company)
+            return res.json({status: 'ok'});
         })
     } else {
         return res.status(401).send('Unauthorized request')

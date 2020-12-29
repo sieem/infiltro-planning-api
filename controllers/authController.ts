@@ -1,12 +1,12 @@
-const User = require('../models/user')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const mailService = require('../services/mailService')
-const authService = require('../services/authService')
+import User from '../models/user';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import mailService from '../services/mailService';
+import { generateToken } from '../services/authService';
 const secretKey = process.env.SECRET_KEY
 const saltRounds = 10
 
-exports.getUsers = async (req, res) => {
+export const getUsers = async (req, res) => {
     const selectParameters = (req.user.role === 'admin') ? { password: 0, resetToken: 0 } : { _id: 1, name: 1, company: 1 }
 
     try {
@@ -19,8 +19,8 @@ exports.getUsers = async (req, res) => {
 }
 
 //unused for now
-exports.getUser = (req, res) => {
-    User.findById(req.params.userId, (err, user) => {
+export const getUser = (req, res) => {
+    User.findById(req.params.userId, (err, user: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -34,7 +34,7 @@ exports.getUser = (req, res) => {
     })
 }
 
-exports.getUserByResetToken = (req, res) => {
+export const getUserByResetToken = (req, res) => {
     User.findOne({ resetToken: req.params.resetToken}, (err, user) => {
         if (err) {
             console.error(err)
@@ -45,8 +45,8 @@ exports.getUserByResetToken = (req, res) => {
     })
 }
 
-exports.loginUser = (req, res) => {
-    User.findOne({ email: req.body.email }, (err, user) => {
+export const loginUser = (req, res) => {
+    User.findOne({ email: req.body.email }, (err, user: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -72,9 +72,9 @@ exports.loginUser = (req, res) => {
     })
 }
 
-exports.addUser = (req, res) => {
+export const addUser = (req, res) => {
     if (req.user.role === 'admin') {
-        User.findOne({ email: req.body.email }, async (err, user) => {
+        User.findOne({ email: req.body.email }, async (err, user: any) => {
             if (err) {
                 console.error(err)
                 return res.status(400).json(err.message)
@@ -82,8 +82,8 @@ exports.addUser = (req, res) => {
             if (user)
                 return res.status(401).send('Email already exists')
             else {
-                let user = new User(req.body)
-                user.resetToken = await authService.generateToken()
+                let user: any = new User(req.body)
+                user.resetToken = await generateToken()
 
                 user.save((err, user) => {
                     if (err) {
@@ -109,8 +109,8 @@ exports.addUser = (req, res) => {
     }
 }
 
-exports.registerUser = (req, res) => {
-    User.findById(req.body._id, (err, user) => {
+export const registerUser = (req, res) => {
+    User.findById(req.body._id, (err, user: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -143,8 +143,8 @@ exports.registerUser = (req, res) => {
 
 
 
-exports.resetPassword = (req, res) => {
-    User.findOne({ email: req.body.email }, async (err, user) => {
+export const resetPassword = (req, res) => {
+    User.findOne({ email: req.body.email }, async (err, user: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -152,7 +152,7 @@ exports.resetPassword = (req, res) => {
 
         if (!user) return res.status(401).send('Unauthorized request: no user found with given email')
 
-        user.resetToken = await authService.generateToken()
+        user.resetToken = await generateToken();
 
         user.save((err, user) => {
             if (err) {
@@ -174,7 +174,7 @@ exports.resetPassword = (req, res) => {
     })
 }
 
-exports.editUser = (req, res) => {
+export const editUser = (req, res) => {
     if (req.user.role === 'admin') {
         let user = new User(req.body)
         User.findByIdAndUpdate(user._id, user, { upsert: true }, function (err, savedUser) {
@@ -190,15 +190,15 @@ exports.editUser = (req, res) => {
     }
 }
 
-exports.removeUser = (req, res) => {
+export const removeUser = (req, res) => {
     if (req.user.role === 'admin') {
-        User.deleteOne({ _id: req.params.userId }, (err, user) => {
+        User.deleteOne({ _id: req.params.userId }, (err) => {
             if (err) {
                 console.error(err)
                 return res.status(400).json(err.message)
             }
 
-            return res.json(user)
+            return res.json({status: 'ok'});
         })
     } else {
         return res.status(401).send('Unauthorized request')

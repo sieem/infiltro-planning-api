@@ -1,12 +1,12 @@
-const mongoose = require('mongoose')
-const Project = require('../models/project')
-const projectService = require('../services/projectService')
+import { Types } from 'mongoose';
+import Project from '../models/project';
+import * as projectService from '../services/projectService';
 
-exports.generateProjectId = (req,res) => {
-    return res.status(200).send(mongoose.Types.ObjectId())
+export const generateProjectId = (req,res) => {
+    return res.status(200).send(Types.ObjectId())
 }
 
-exports.saveProject = async (req, res) => {
+export const saveProject = async (req, res) => {
     try {
         const project = await projectService.saveProject(req.body, req.user);
         res.status(200).json(project);
@@ -16,7 +16,7 @@ exports.saveProject = async (req, res) => {
     }
 }
 
-exports.getProjects = (req, res) => {
+export const getProjects = (req, res) => {
     let findParameters = (req.user.role === 'admin') ? {} : { company: req.user.company }
     if(req.user.role === 'admin') {
         findParameters = {}
@@ -33,8 +33,8 @@ exports.getProjects = (req, res) => {
     
 }
 
-exports.getProject = (req, res) => {
-    Project.findById(req.params.projectId, (err, project) => {
+export const getProject = (req, res) => {
+    Project.findById(req.params.projectId, (err, project: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -53,8 +53,8 @@ exports.getProject = (req, res) => {
     })
 }
 
-exports.removeProject = async (req, res) => {
-    const foundProject = await Project.findById(req.params.projectId).exec();
+export const removeProject = async (req, res) => {
+    const foundProject: any = await Project.findById(req.params.projectId).exec();
     foundProject.status = 'deleted';
     req.body = foundProject;
 
@@ -67,10 +67,10 @@ exports.removeProject = async (req, res) => {
     }
 }
 
-exports.duplicateProject = async (req, res) => {
+export const duplicateProject = async (req, res) => {
     try {
-        const foundProject = await Project.findById(req.body.projectId).exec();
-        foundProject._id = mongoose.Types.ObjectId();
+        const foundProject: any = await Project.findById(req.body.projectId).exec();
+        foundProject._id = Types.ObjectId();
         foundProject.projectName = foundProject.projectName + ' (kopie)';
         foundProject.eventId = '';
         foundProject.calendarId = '';
@@ -92,14 +92,14 @@ exports.duplicateProject = async (req, res) => {
     }
 }
 
-exports.batchProjects = async (req, res) => {
+export const batchProjects = async (req, res) => {
     if (req.user.role === 'admin') {
         const statusToChange = req.body.status
         const projectsToChange = req.body.projects
 
         for (const projectToChange of projectsToChange) {
             try {
-                const foundProject = await Project.findById(projectToChange._id).exec();
+                const foundProject: any = await Project.findById(projectToChange._id).exec();
                 foundProject.status = statusToChange;
                 await projectService.saveProject(foundProject, req.user);
                 

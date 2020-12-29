@@ -1,5 +1,5 @@
-const fs = require('fs');
-const readline = require('readline');
+import * as fs from 'fs';
+import * as readline from 'readline';
 const {google} = require('googleapis');
 
 // If modifying these scopes, delete token.json.
@@ -10,7 +10,7 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const TOKEN_PATH = 'token.json';
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
+fs.readFile('credentials.json', (err, content: any) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Calendar API.
   authorize(JSON.parse(content), listCalendars);
@@ -28,7 +28,7 @@ function authorize(credentials, callback) {
       client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
+  fs.readFile(TOKEN_PATH, (err, token: any) => {
     if (err) return getAccessToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
     callback(oAuth2Client);

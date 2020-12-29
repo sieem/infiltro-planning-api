@@ -1,12 +1,11 @@
-const mongoose = require('mongoose')
-const Project = require('../models/project')
-const mailService = require('../services/mailService')
+import Project from '../models/project';
+import mailService from '../services/mailService';
 
-exports.sendProjectMail = async (req, res) => {
+export const sendProjectMail = async (req, res) => {
     if (req.user.role === 'admin') {
         const mailForm = req.body
         const htmlMailBody = mailForm.body.replace(/\n/g, "<br>")
-        const foundProject = await Project.findById(mailForm._id).exec()
+        const foundProject: any = await Project.findById(mailForm._id).exec()
 
         const mailDetails = {
             david: {

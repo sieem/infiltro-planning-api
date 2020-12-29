@@ -148,7 +148,7 @@
         }
     };
 
-    colorToMatch = hexToRGB("E67C73");
+    const colorToMatch = hexToRGB("E67C73");
     let leastDifferentColor;
     let leastDifference = 255 * 3 + 1;
 

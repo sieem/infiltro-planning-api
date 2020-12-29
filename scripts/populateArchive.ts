@@ -1,13 +1,16 @@
+import { config } from 'dotenv';
+import { connect } from 'mongoose';
+import Project from '../models/project';
+import { saveProjectArchive } from '../services/archiveService';
+
 (async () => {
-    require('dotenv').config()
-    const mongoose = require('mongoose')
-    const Project = require('./models/project')
-    const archiveService = require('./services/archiveService')
+    config();
+
     let projects
 
     const db = `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@localhost:27017/${process.env.MONGODB_DB}`
 
-    mongoose.connect(db, { useNewUrlParser: true }, err => {
+    connect(db, { useNewUrlParser: true }, err => {
         if (err) {
             console.log(err)
             return
@@ -27,7 +30,7 @@
     console.log('start populating', new Date)
 
     for (const project of projects) {
-        archiveService.saveProjectArchive(project, null);
+        saveProjectArchive(project, null);
     }
 
     console.log("done populating", new Date)

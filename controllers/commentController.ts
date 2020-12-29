@@ -1,8 +1,8 @@
-const mongoose = require('mongoose')
-const Project = require('../models/project')
+import { Types } from 'mongoose';
+import Project from '../models/project';
 
-exports.getComments = (req, res) => {
-    Project.findById(req.params.projectId, (err, project) => {
+export const getComments = (req, res) => {
+    Project.findById(req.params.projectId, (err, project: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)
@@ -13,13 +13,13 @@ exports.getComments = (req, res) => {
     })
 }
 
-exports.saveComment = async (req, res) => {
+export const saveComment = async (req, res) => {
     const commentForm = req.body
     let commentObject = {}
 
     if (!commentForm._id) {
         commentObject = {
-            _id: mongoose.Types.ObjectId(),
+            _id: Types.ObjectId(),
             user: commentForm.user,
             createdDateTime: new Date,
             modifiedDateTime: new Date,
@@ -33,7 +33,7 @@ exports.saveComment = async (req, res) => {
         }
 
         try {
-            const project = await Project.findById(req.params.projectId).exec()
+            const project: any = await Project.findById(req.params.projectId).exec()
             return res.json(project.comments)
         } catch (error) {
             console.log(error)
@@ -51,7 +51,7 @@ exports.saveComment = async (req, res) => {
             content: commentForm.content,
         }
 
-        const project = await Project.findById(req.params.projectId).exec()
+        const project:any = await Project.findById(req.params.projectId).exec()
 
         project.comments = updateElementInArray(project.comments, commentObject)
         await Project.findByIdAndUpdate(req.params.projectId, project, { upsert: true }).exec()
@@ -59,8 +59,8 @@ exports.saveComment = async (req, res) => {
     }
 }
 
-exports.removeComment = (req, res) => {
-    Project.findById(req.params.projectId, async (err, project) => {
+export const removeComment = (req, res) => {
+    Project.findById(req.params.projectId, async (err, project: any) => {
         if (err) {
             console.error(err)
             return res.status(400).json(err.message)

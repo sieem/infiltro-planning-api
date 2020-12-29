@@ -1,13 +1,15 @@
+import { config } from 'dotenv';
+import { connect } from 'mongoose';
+import Project from '../models/project';
+import Archive from '../models/archive';
+
 (async () => {
-    require('dotenv').config()
-    const mongoose = require('mongoose')
-    const Project = require('./models/project')
-    const Archive = require('./models/archive')
+    config();
     let projects
 
     const db = `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@localhost:27017/${process.env.MONGODB_DB}`
 
-    mongoose.connect(db, { useNewUrlParser: true }, err => {
+    connect(db, { useNewUrlParser: true }, err => {
         if (err) {
             console.log(err)
             return
@@ -28,7 +30,7 @@
 
     for (const project of projects) {
         try {
-            const { savedDateTime } = await Archive.findOne({ projectId: project._id }).sort({ savedDateTime: -1 });
+            const { savedDateTime } = await Archive.findOne({ projectId: project._id }).sort({ savedDateTime: -1 }) as any;
             project.dateEdited = savedDateTime;
             console.log('modified', project._id, project.dateEdited);
             new Project(project).save();

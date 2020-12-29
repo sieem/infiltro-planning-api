@@ -1,8 +1,10 @@
+import { config } from 'dotenv';;
+import { execSync } from 'child_process';
+import NodeSSH from 'node-ssh';
+
 (async () => {
-    require('dotenv').config();
-    const { execSync } = require('child_process');
-    const node_ssh = require('node-ssh');
-    const ssh = new node_ssh();
+    const ssh = new NodeSSH();
+    config();
 
     try {
 

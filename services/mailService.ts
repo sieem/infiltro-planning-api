@@ -1,6 +1,19 @@
 const nodemailer = require("nodemailer");
-    
-module.exports = class Mail {
+
+interface Signature {
+    text: String,
+    html: String,
+}
+
+export default class Mail {
+    private mailData: any;
+    private personalSignatures: {
+        david: Signature,
+        roel: Signature,
+        default: Signature,
+    }
+    private transporter: any;
+
     constructor(mailData) {
         this.mailData = mailData
         
