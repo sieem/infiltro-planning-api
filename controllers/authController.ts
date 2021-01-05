@@ -1,10 +1,13 @@
 import User from '../models/user';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import mailService from '../services/mailService';
 import { generateToken } from '../services/authService';
-const secretKey = process.env.SECRET_KEY
-const saltRounds = 10
+import { config } from 'dotenv';
+config();
+
+const secretKey = process.env.SECRET_KEY as Secret;
+const saltRounds = 10;
 
 export const getUsers = async (req, res) => {
     const selectParameters = (req.user.role === 'admin') ? { password: 0, resetToken: 0 } : { _id: 1, name: 1, company: 1 }
