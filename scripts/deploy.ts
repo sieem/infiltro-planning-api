@@ -84,5 +84,12 @@ import NodeSSH from 'node-ssh';
         console.log('the directory transfer was', status ? 'successful' : 'unsuccessful');
         // console.log('successful transfers', successful);
         console.log('failed transfers', failed);
+
+        try {
+            console.log(await ssh.exec('pm2 restart server', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 })();
