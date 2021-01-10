@@ -35,7 +35,7 @@ export const sendProjectMail = async (req, res) => {
             from: '"Infiltro" <planning@infiltro.be>',
             replyTo,
             bcc: 'info@infiltro.be',
-            to: mailForm.to,
+            to: mailForm.receiver,
             cc: mailForm.cc,
             subject: mailForm.subject,
             text: mailForm.body,
@@ -47,8 +47,9 @@ export const sendProjectMail = async (req, res) => {
 
         const mailObject = {
             sender: req.user._id,
-            receiver: mailForm.to,
+            receiver: mailForm.receiver,
             cc: mailForm.cc,
+            subject: mailForm.subject,
             dateSent: new Date(),
             body: mail.getHtml()
         }
