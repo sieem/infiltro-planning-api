@@ -3,7 +3,7 @@ import multer from 'multer';
 import { generateProjectId, getProjects, getProject, saveProject, removeProject, duplicateProject, batchProjects } from './controllers/projectController';
 import { addUser, editUser, getUserByResetToken, registerUser, loginUser, getUser, resetPassword, removeUser, getUsers } from './controllers/authController';
 import { getCompanies, saveCompany, removeCompany } from './controllers/companiesController';
-import { sendProjectMail } from './controllers/mailController';
+import { sendProjectMail, getMailTemplates, saveMailTemplate, removeMailTemplate } from './controllers/mailController';
 import { getComments, saveComment, removeComment } from './controllers/commentController';
 import { getProjectArchive } from './controllers/archiveController';
 import { verifyToken, getUserDetails } from './middleware/authMiddleware';
@@ -29,6 +29,9 @@ router.delete('/remove-project/:projectId', verifyToken, getUserDetails, removeP
 router.post('/duplicate-project/', upload.none(), verifyToken, getUserDetails, duplicateProject);
 router.post('/batch-projects', upload.none(), verifyToken, getUserDetails, batchProjects);
 router.post('/send-project-mail', upload.none(), verifyToken, getUserDetails, sendProjectMail);
+router.get('/get-mail-templates', verifyToken, getUserDetails, getMailTemplates);
+router.post('/save-mail-template', upload.none(), verifyToken, getUserDetails, saveMailTemplate);
+router.post('/remove-mail-template', upload.none(), verifyToken, getUserDetails, removeMailTemplate);
 
 router.get('/get-comments/:projectId', verifyToken, getUserDetails, getComments);
 router.post('/save-comment/:projectId', upload.none(), verifyToken, getUserDetails, saveComment);

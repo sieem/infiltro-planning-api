@@ -1,3 +1,4 @@
+import MailTemplate from '../models/mailTemplate';
 import Project from '../models/project';
 import mailService from '../services/mailService';
 
@@ -68,4 +69,53 @@ export const sendProjectMail = async (req, res) => {
     } else {
         return res.status(401).send('Unauthorized request')
     }
+}
+
+export const getMailTemplates = (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(401).send('Unauthorized request');
+    }
+
+    MailTemplate.find({}, (err, mailTemplates) => {
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
+        }
+        else res.status(200).json(mailTemplates)
+    })
+}
+
+
+export const saveMailTemplate = async (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(401).send('Unauthorized request');
+    }
+
+    if (await MailTemplate.findOne({ name: req.body.name }).exec()) {
+        return res.status(400).json('Template already found with this name');
+    }
+
+    const mailTemplate = new MailTemplate(req.body);
+    try {
+        const responseBody = await mailTemplate.save();
+        return res.status(200).json(responseBody);
+    } catch (err) {
+        console.error(err)
+        return res.status(400).json(err.message)
+    }
+}
+
+export const removeMailTemplate = async (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(401).send('Unauthorized request');
+    }
+
+    MailTemplate.deleteOne({ _id: req.params.templateId }, (err) => {
+        if (err) {
+            console.error(err)
+            return res.status(400).json(err.message)
+        }
+
+        return res.json({ status: 'ok' });
+    })
 }
