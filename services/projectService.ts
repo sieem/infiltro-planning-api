@@ -41,7 +41,19 @@ export const saveCalendarItem = async (project, foundProject) => {
         const event: any = {
             summary: `${companyQuery.name}: ${project.projectName} / ${projectTypeName(project.projectType)} / ${project.houseAmount}`,
             location: `${project.street} ${project.postalCode} ${project.city}`,
-            description: `Bijkomenda aanwijzigingen adres: ${project.extraInfoAddress}\nContactgegevens: ${project.name} ${project.tel} ${project.email}\n${project.extraInfoContact}\nA-Test: ${!!project.ATest ? project.ATest : 'onbekend'} m²\nv50-waarde: ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²\nBeschermd volume: ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³\nEPB nr: ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}\nContactpersoon: ${!!project.EpbReporter ? await userIdToName(project.EpbReporter) : 'onbekend'}\nOpmerkingen: \n ${await commentsToString(project.comments)}`,
+            description: `
+                    <b><u><a href="${process.env.BASE_URL}/project/${project._id}">Open project</a></u></b>
+
+                    <b>Bijkomenda aanwijzigingen adres:</b> ${project.extraInfoAddress}
+                    <b>Contactgegevens:</b>${project.name} <a href="tel:${project.tel}">${project.tel}</a> ${project.email}
+                    ${project.extraInfoContact}
+                    <b>A-Test:</b> ${!!project.ATest ? project.ATest : 'onbekend'} m²
+                    <b>v50-waarde:</b> ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²
+                    <b>Beschermd volume:</b> ${!!project.protectedVolume ? project.protectedVolume : 'onbekend'}m³
+                    <b>EPB nr:</b> ${!!project.EpbNumber ? project.EpbNumber : 'onbekend'}
+                    <b>Contactpersoon:</b> ${!!project.EpbReporter ? await userIdToName(project.EpbReporter) : 'onbekend'}
+                    <b>Opmerkingen:</b>
+                    ${await commentsToString(project.comments)}`.replace(/\n */g, '\n').trim(),
             start: {
                 dateTime: project.datePlanned,
                 timeZone: 'Europe/Brussels',
