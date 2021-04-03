@@ -45,7 +45,7 @@ export const saveCalendarItem = async (project, foundProject) => {
                     <b><u><a href="${process.env.BASE_URL}/project/${project._id}">Open project</a></u></b>
 
                     <b>Bijkomenda aanwijzigingen adres:</b> ${project.extraInfoAddress}
-                    <b>Contactgegevens:</b>${project.name} <a href="tel:${project.tel}">${project.tel}</a> ${project.email}
+                    <b>Contactgegevens:</b> ${project.name} <a href="tel:${project.tel}">${project.tel}</a> ${project.email}
                     ${project.extraInfoContact}
                     <b>A-Test:</b> ${!!project.ATest ? project.ATest : 'onbekend'} m²
                     <b>v50-waarde:</b> ${!!project.v50Value ? project.v50Value : 'onbekend'}m³/h.m²
