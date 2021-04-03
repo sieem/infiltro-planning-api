@@ -17,7 +17,7 @@ import NodeSSH from 'node-ssh';
 
         if (process.argv.indexOf('frontend') !== -1 || process.argv.indexOf('f') !== -1) {
             console.log('deploying frontend')
-            await frontenDeploy()
+            await frontendDeploy()
         }
 
         if (process.argv.indexOf('backend') !== -1 || process.argv.indexOf('b') !== -1) {
@@ -27,7 +27,7 @@ import NodeSSH from 'node-ssh';
 
         if (process.argv.indexOf('frontend') === -1 && process.argv.indexOf('backend') === -1 && process.argv.indexOf('f') === -1 && process.argv.indexOf('b') === -1) {
             console.log('deploying frontend and backend')
-            await frontenDeploy()
+            await frontendDeploy()
             await backendDeploy()
         }
     } catch (error) {
@@ -37,7 +37,7 @@ import NodeSSH from 'node-ssh';
     process.exit();
 
 
-    async function frontenDeploy() {
+    async function frontendDeploy() {
         // build angular
         const stdout = await execSync(`cd ${__dirname}/../../infiltro-planning && npm run build`);
 
@@ -67,10 +67,7 @@ import NodeSSH from 'node-ssh';
         // build typescript
         const stdout = await execSync(`npm run build`);
 
-        console.log(`ng build: ${stdout}`);
-
-        // delay(5000);
-        // return;
+        console.log(`build: ${stdout}`);
 
         const failed = [];
         const successful = [];
