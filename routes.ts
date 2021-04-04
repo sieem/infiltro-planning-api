@@ -31,7 +31,7 @@ router.post('/batch-projects', upload.none(), verifyToken, getUserDetails, batch
 router.post('/send-project-mail', upload.none(), verifyToken, getUserDetails, sendProjectMail);
 router.get('/get-mail-templates', verifyToken, getUserDetails, getMailTemplates);
 router.post('/save-mail-template', upload.none(), verifyToken, getUserDetails, saveMailTemplate);
-router.post('/remove-mail-template', upload.none(), verifyToken, getUserDetails, removeMailTemplate);
+router.delete('/remove-mail-template/:templateId', upload.none(), verifyToken, getUserDetails, removeMailTemplate);
 
 router.get('/get-comments/:projectId', verifyToken, getUserDetails, getComments);
 router.post('/save-comment/:projectId', upload.none(), verifyToken, getUserDetails, saveComment);

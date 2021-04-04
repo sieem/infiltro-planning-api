@@ -1,7 +1,7 @@
 import Company from '../models/company';
 
 export const getCompanies = (req, res) => {
-    let findParameters = (req.user.role === 'admin')? {}: { _id: req.user.company }
+    const findParameters = (req.user.role === 'admin')? {}: { _id: req.user.company }
 
     Company.find(findParameters, (err, companies) => {
         if (err) {
@@ -14,7 +14,7 @@ export const getCompanies = (req, res) => {
 
 export const saveCompany = (req, res) => {
     if (req.user.role === 'admin') {
-        let company = new Company(req.body)
+        const company = new Company(req.body)
         Company.findByIdAndUpdate(company._id, company, { upsert: true }, function (err, savedCompany) {
             if (err) {
                 console.error(err)

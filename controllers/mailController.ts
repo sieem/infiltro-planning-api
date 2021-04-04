@@ -91,18 +91,20 @@ export const saveMailTemplate = async (req, res) => {
         return res.status(401).send('Unauthorized request');
     }
 
-    if (await MailTemplate.findOne({ name: req.body.name }).exec()) {
+    if (!req.body._id && await MailTemplate.findOne({ name: req.body.name }).exec()) {
         return res.status(400).json('Template already found with this name');
     }
 
     const mailTemplate = new MailTemplate(req.body);
+
     try {
-        const responseBody = await mailTemplate.save();
-        return res.status(200).json(responseBody);
-    } catch (err) {
-        console.error(err)
-        return res.status(400).json(err.message)
+        const responseBody = await MailTemplate.findByIdAndUpdate(mailTemplate._id, mailTemplate, { upsert: true }).exec();
+        res.status(200).json(responseBody);
+    } catch (error) {
+        console.error(error);
+        return res.status(400).json(error.message);
     }
+
 }
 
 export const removeMailTemplate = async (req, res) => {
