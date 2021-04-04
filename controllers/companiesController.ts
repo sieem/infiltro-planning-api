@@ -27,16 +27,15 @@ export const saveCompany = (req, res) => {
     }
 }
 
-export const removeCompany = (req, res) => {
+export const removeCompany = async (req, res) => {
     if (req.user.role === 'admin') {
-        Company.deleteOne({ _id: req.params.companyId }, (err) => {
-            if (err) {
-                console.error(err)
-                return res.status(400).json(err.message)
-            }
-
-            return res.json({status: 'ok'});
-        })
+        try {
+            Company.deleteOne({ _id: req.params.companyId }).exec();
+            return res.json({ status: 'ok' });
+        } catch (error) {
+            console.error(error)
+            return res.status(400).json(error.message)
+        }
     } else {
         return res.status(401).send('Unauthorized request')
     }

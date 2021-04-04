@@ -56,16 +56,15 @@ export const sendProjectMail = async (req, res) => {
         }
 
         // save mail intro database
-        Project.updateOne({ _id: mailForm._id }, {
-            $push: { mails: mailObject }
-        }, function (err, affected, resp) {
-            if (err) {
-                console.error(err)
-                return res.status(400).json(err.message)
-            }
-            else res.json({})
-        })
-
+        try {
+            await Project.updateOne({ _id: mailForm._id }, {
+                $push: { mails: mailObject }
+            }).exec();
+            return res.json({});
+        } catch (error) {
+            console.error(error)
+            return res.status(400).json(error.message)
+        }
     } else {
         return res.status(401).send('Unauthorized request')
     }
@@ -111,13 +110,11 @@ export const removeMailTemplate = async (req, res) => {
     if (req.user.role !== 'admin') {
         return res.status(401).send('Unauthorized request');
     }
-
-    MailTemplate.deleteOne({ _id: req.params.templateId }, (err) => {
-        if (err) {
-            console.error(err)
-            return res.status(400).json(err.message)
-        }
-
+    try {
+        MailTemplate.deleteOne({ _id: req.params.templateId }).exec();
         return res.json({ status: 'ok' });
-    })
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json(error.message)
+    }
 }

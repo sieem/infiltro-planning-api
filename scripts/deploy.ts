@@ -1,6 +1,6 @@
 import { config } from 'dotenv';;
 import { execSync } from 'child_process';
-import NodeSSH from 'node-ssh';
+import { NodeSSH } from 'node-ssh';
 
 (async () => {
     const ssh = new NodeSSH();
@@ -72,15 +72,23 @@ import NodeSSH from 'node-ssh';
         const failed = [];
         const successful = [];
 
-        const status = await ssh.putDirectory('./dist', '/root/infiltro-planning-api', {
+        let status = await ssh.putDirectory('./dist', '/root/infiltro-planning-api', {
             recursive: true,
             concurrency: 10,
             tick: (localPath, remotePath, error) => (error) ? failed.push(localPath) : successful.push(localPath)
-        })
+        });
 
         console.log('the directory transfer was', status ? 'successful' : 'unsuccessful');
         // console.log('successful transfers', successful);
         console.log('failed transfers', failed);
+
+        try {
+            await ssh.putFile('./package.json', '/root/infiltro-planning-api/package.json');
+            await ssh.putFile('./package-lock.json', '/root/infiltro-planning-api/package-lock.json');
+            console.log('npm ci:', await ssh.exec('npm ci', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));
+        } catch (error) {
+            console.error(error)
+        }
 
         try {
             console.log(await ssh.exec('pm2 restart server', [], { cwd: '/root/infiltro-planning-api', stream: 'stdout' }));

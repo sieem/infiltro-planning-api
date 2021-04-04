@@ -9,6 +9,7 @@ import * as https from 'https';
 import * as fs from 'fs';
 import cookieParser from 'cookie-parser';
 import { router } from './routes';
+import { AddressInfo } from 'node:net';
 
 config();
 
@@ -69,7 +70,8 @@ if (process.env.NODE_ENV == "production") {
     const httpsServer = https.createServer(credentials, app);
     try {
         httpsServer.listen(process.env.PORT, () => {
-            console.log(`App listening on port ${httpsServer.address()} SSL`);
+            const addressInfo = httpsServer.address() as AddressInfo;
+            console.log(`App listening on port ${addressInfo.port} SSL`);
         });
     } catch (error) {
         console.error(error);
@@ -85,7 +87,8 @@ else if (process.env.NODE_ENV == "development") {
     const httpServer = http.createServer(app);
     try {
         httpServer.listen(process.env.PORT || 3000, () => {
-            console.log(`App listening on port ${httpServer.address()} Non-SSL`);
+            const addressInfo = httpServer.address() as AddressInfo;
+            console.log(`App listening on port ${addressInfo.port} Non-SSL`);
         });
     } catch (error) {
         console.error(error);

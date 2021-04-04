@@ -8,6 +8,7 @@
         "baseUrl": "./",
         "noUnusedLocals": true,
         "esModuleInterop": true,
-        "paths": {}
+        "paths": {},
+        "skipLibCheck": true
     }
 }

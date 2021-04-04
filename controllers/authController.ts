@@ -193,16 +193,15 @@ export const editUser = (req, res) => {
     }
 }
 
-export const removeUser = (req, res) => {
+export const removeUser = async (req, res) => {
     if (req.user.role === 'admin') {
-        User.deleteOne({ _id: req.params.userId }, (err) => {
-            if (err) {
-                console.error(err)
-                return res.status(400).json(err.message)
-            }
-
-            return res.json({status: 'ok'});
-        })
+        try {
+            await User.deleteOne({ _id: req.params.userId }).exec();
+            return res.json({ status: 'ok' });
+        } catch (error) {
+            console.error(error)
+            return res.status(400).json(error.message)
+        }
     } else {
         return res.status(401).send('Unauthorized request')
     }
