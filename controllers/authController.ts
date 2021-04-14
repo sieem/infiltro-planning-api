@@ -44,6 +44,10 @@ export const getUserByResetToken = (req, res) => {
             return res.status(400).json(err.message)
         }
 
+        if (!user) {
+            return res.status(404).text('user not found');
+        }
+
         return res.status(200).json(user._id)
     })
 }
