@@ -57,13 +57,14 @@ export default class Mail {
         if (process.env.NODE_ENV === 'production') {
             // all emails are delivered to destination
             mailConfig = {
-                host: 'mail.infiltro.be',
-                port: 465,
+                host: process.env.MAILSERVER_HOST,
+                port: process.env.MAILSERVER_PORT,
                 auth: {
                     user: process.env.MAILSERVER_USER,
                     pass: process.env.MAILSERVER_PASS
                 },
                 tls: {
+                    secure: true,
                     rejectUnauthorized: false
                 }
             }
