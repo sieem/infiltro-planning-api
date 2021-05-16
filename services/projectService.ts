@@ -134,7 +134,7 @@ const sendMails = (project, savedProject, user) => {
 }
 
 const handleActiveDate = (project, oldProject) => {
-    project.dateActive = oldProject?.dateActive;
+    project.dateActive = project.dateActive ? project.dateActive : oldProject?.dateActive;
 
     if (project.status === 'contractSigned') { // "Nog niet actief"
         project.dateActive = null;
