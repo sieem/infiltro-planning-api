@@ -8,7 +8,7 @@ import mailService from '../services/mailService';
 import { commentsToString, userIdToName, projectTypeName } from '../services/commonService';
 const calendar = new calendarService();
 
-export const getCoordinates = async (project, foundProject) => {
+const getCoordinates = async (project, foundProject) => {
     if (foundProject && project.street === foundProject.street && project.city === foundProject.city && project.postalCode === foundProject.postalCode && foundProject.lng && foundProject.lat) {
         return project;
     }
@@ -27,7 +27,7 @@ export const getCoordinates = async (project, foundProject) => {
 
     return project;
 }
-export const addCommentsAndEmails = (project, oldProject) => {
+const addCommentsAndEmails = (project, oldProject) => {
     // add comments and emails to project object
     project.mails = (oldProject) ? oldProject.mails : [];
     project.comments = (oldProject) ? oldProject.comments : [];
@@ -35,7 +35,7 @@ export const addCommentsAndEmails = (project, oldProject) => {
     return project;
 }
 
-export const saveCalendarItem = async (project, foundProject) => {
+const saveCalendarItem = async (project, foundProject) => {
     if (project.datePlanned && project.hourPlanned && ['proposalSent', 'planned'].indexOf(project.status) > -1 && project.executor) {
         const companyQuery: any = await Company.findById(project.company).exec()
         const event: any = {
@@ -108,7 +108,7 @@ export const saveCalendarItem = async (project, foundProject) => {
     return project;
 }
 
-export const sendMails = (project, savedProject, user) => {
+const sendMails = (project, savedProject, user) => {
     // check if I have to send mails
     const idDavid = '5d4c733e65469039e2dd5acf'
     if (!savedProject && user.get('id') !== idDavid) {
@@ -133,6 +133,23 @@ export const sendMails = (project, savedProject, user) => {
     }
 }
 
+const handleActiveDate = (project, oldProject) => {
+    project.dateActive = oldProject?.dateActive;
+
+    if (project.status === 'contractSigned') { // "Nog niet actief"
+        project.dateActive = null;
+    }
+    if (!['toPlan', 'toContact'].includes(project.status)) {
+        return project;
+    }
+
+    if (!project.dateActive || ['onHold', 'onHoldByClient'].includes(oldProject.status)) {
+        project.dateActive = new Date();
+    }
+
+    return project;
+};
+
 export const saveProject = async (body, user) => {
     if ((body.company === user.company && user.role === 'company') || user.role === 'admin') {
         let project: any = new Project(body)
@@ -146,6 +163,7 @@ export const saveProject = async (body, user) => {
             project = await getCoordinates(project, oldProject);
             project = addCommentsAndEmails(project, oldProject);
             project = await saveCalendarItem(project, oldProject);
+            project = handleActiveDate(project, oldProject);
             project.dateEdited = new Date();
 
             saveProjectArchive(project, user.get('id'));

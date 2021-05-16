@@ -34,7 +34,8 @@ class Project extends Schema {
             mails: Array,
             calendarId: String,
             eventId: String,
-            calendarLink: String
+            calendarLink: String,
+            dateActive: Date,
         })
     }
 }
