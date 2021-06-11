@@ -79,6 +79,7 @@ export const duplicateProject = async (req, res) => {
         foundProject.datePlanned = '';
         foundProject.hourPlanned = '';
         foundProject.dateCreated = new Date();
+        foundProject.dateActive = null;
 
         try {
             await projectService.saveProject(foundProject, req.user);
