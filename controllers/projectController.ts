@@ -78,6 +78,7 @@ export const duplicateProject = async (req, res) => {
         foundProject.status = 'toPlan';
         foundProject.datePlanned = '';
         foundProject.hourPlanned = '';
+        foundProject.dateCreated = new Date();
 
         try {
             await projectService.saveProject(foundProject, req.user);
