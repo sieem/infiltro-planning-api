@@ -41,7 +41,7 @@ const executors = [
     }
 ];
 
-export const commentsToString = async (comments) => {
+export const commentsToString = async (comments = []) => {
     let returnString = '';
     
     for (const comment of comments) {
