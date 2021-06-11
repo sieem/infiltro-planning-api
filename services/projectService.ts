@@ -158,7 +158,7 @@ export const saveProject = async (body, user) => {
         project.datePlanned = calendar.combineDateHour(project.datePlanned, project.hourPlanned)
 
         try {
-            const oldProject = await Project.findById(project._id).exec();
+            const oldProject = await Project.findById(project._id).exec() ?? {};
 
             project = await getCoordinates(project, oldProject);
             project = addCommentsAndEmails(project, oldProject);
